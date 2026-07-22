@@ -18,8 +18,8 @@ const DEFAULT_ADMIN: UserAccount = {
   name: 'Admin BAAK IF 2026',
   nim: '260000000',
   whatsapp: '081111111111',
-  email: 'admin@infotik.com',
-  password: 'admin2026',
+  email: import.meta.env.VITE_ADMIN_EMAIL || 'admin@infotik.com',
+  password: import.meta.env.VITE_ADMIN_PASSWORD || 'admin2026',
   role: 'admin',
   avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=admin'
 };
@@ -32,7 +32,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const savedUsers = localStorage.getItem('infotik_users');
     if (savedUsers) {
-      setUsers(JSON.parse(savedUsers));
+      let loadedUsers: UserAccount[] = JSON.parse(savedUsers);
+      // Sync admin account in local storage with current .env configuration
+      loadedUsers = loadedUsers.map((u) =>
+        u.id === 'usr-admin'
+          ? {
+              ...u,
+              email: import.meta.env.VITE_ADMIN_EMAIL || 'admin@infotik.com',
+              password: import.meta.env.VITE_ADMIN_PASSWORD || 'admin2026'
+            }
+          : u
+      );
+      setUsers(loadedUsers);
+      localStorage.setItem('infotik_users', JSON.stringify(loadedUsers));
     } else {
       const initialUsers = [DEFAULT_ADMIN];
       setUsers(initialUsers);

@@ -7,7 +7,7 @@ Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOT
 - ✅ **Sistem Login & Register (Authentication)**:
   - Form gerbang masuk & daftar akun terintegrasi.
   - Mahasiswa baru daftar dengan input Nama, NIM (awalan `26` divalidasi), WhatsApp, Email, dan Password.
-  - Registrasi Admin mendukung input kode undangan `admin2026`.
+  - Registrasi Admin mendukung input kode undangan dari berkas lingkungan (.env).
 - ✅ **Sistem Otorisasi Peran (Authorization)**:
   - Role `'user'`: Akses terbatas ke Dashboard, Coming Soon (Jadwal, BTQ, Tugas), Tips, News, Forum (posting dengan nama otomatis terikat ke sesi login), dan verifikasi grup WA pribadi.
   - Role `'admin'`: Akses eksklusif ke **Dashboard Admin Terpadu** (statistik, verifikasi berkas PDF OCR, direktori user mahasiswa, publish buletin, & publish tugas).

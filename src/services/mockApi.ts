@@ -314,7 +314,7 @@ export const mockApi = {
       submittedAt: new Date().toLocaleString('id-ID'),
       status: status,
       rejectionReason: rejectionReason,
-      waLink: 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
+      waLink: import.meta.env.VITE_WA_GROUP_LINK || 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
     };
 
     const filtered = submissions.filter(s => s.nim !== formData.nim);

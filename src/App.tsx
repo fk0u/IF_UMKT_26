@@ -133,7 +133,8 @@ const AppContent: React.FC = () => {
     setAuthError('');
     try {
       // NIM check for 2026 angkatan
-      if (!signupForm.nim.startsWith('26') && signupForm.adminCode !== 'admin2026') {
+      const expectedAdminCode = import.meta.env.VITE_ADMIN_INVITATION_CODE || 'admin2026';
+      if (!signupForm.nim.startsWith('26') && signupForm.adminCode !== expectedAdminCode) {
         setAuthError('NIM bukan Mahasiswa Angkatan 2026! Pendaftaran dibatasi khusus angkatan 2026.');
         return;
       }
@@ -144,7 +145,7 @@ const AppContent: React.FC = () => {
         whatsapp: signupForm.whatsapp,
         email: signupForm.email,
         password: signupForm.password,
-        role: signupForm.adminCode === 'admin2026' ? 'admin' : 'user'
+        role: signupForm.adminCode === expectedAdminCode ? 'admin' : 'user'
       });
 
       showToast('Pendaftaran Berhasil', 'Akun mahasiswa baru terdaftar.', 'success');

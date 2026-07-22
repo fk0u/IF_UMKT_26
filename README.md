@@ -109,12 +109,19 @@ Pastikan Anda sudah menginstal **Node.js** (versi 18+) di komputer Anda.
 
 ---
 
-## 🔑 Kredensial Uji Coba (Testing Accounts)
+## 🔑 Kredensial Uji Coba & Setelan Keamanan (Testing Accounts)
 
-Untuk mempermudah pengujian alur sistem informasi, gunakan kredensial berikut:
+Untuk alasan keamanan repositori publik, seluruh konfigurasi data sensitif seperti password admin, kode undangan registrasi admin, dan tautan WhatsApp dipindahkan ke berkas `.env` di lingkungan lokal (diabaikan oleh Git).
 
-| Akun Peran | NIM / Email | Password | Kegunaan Uji Coba |
+Silakan salin berkas `.env.example` menjadi `.env` sebelum menjalankan aplikasi:
+```bash
+cp .env.example .env
+```
+
+Gunakan kredensial pengujian berikut (sesuai setelan default pada berkas `.env.example`):
+
+| Akun Peran | NIM / Email | Password / Kode Undangan | Kegunaan Uji Coba |
 | :--- | :--- | :--- | :--- |
-| **Admin Angkatan** | `admin@infotik.com` | `admin2026` | Masuk ke Panel Admin kontrol untuk menyetujui waitlist / verifikasi WA. |
+| **Admin Angkatan** | `admin@example.com` | `******` (Lihat berkas `.env`) | Masuk ke Panel Admin kontrol untuk menyetujui waitlist / verifikasi WA. |
 | **Mahasiswa Baru** | Mendaftar baru dengan NIM diawali `26...` | Kustom | Menguji pendaftaran akun valid, simulasi OCR, dan pendaftaran Waitlist. |
 | **NIM Tidak Valid** | Mendaftar baru dengan NIM diawali `25...` / `24...` | Kustom | Menguji penolakan otomatisasi sistem registrasi angkatan 2026. |
