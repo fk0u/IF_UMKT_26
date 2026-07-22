@@ -48,6 +48,26 @@ struct ScheduleItem: Codable, Identifiable {
     let color: String
 }
 
+struct ForumReply: Codable, Hashable {
+    let author: String
+    let avatar: String
+    let date: String
+    let content: String
+}
+
+struct ForumThread: Codable, Identifiable {
+    let id: String
+    let author: String
+    let nim: String
+    let avatar: String
+    let title: String
+    let category: String
+    let content: String
+    let date: String
+    let upvotes: Int
+    let replies: [ForumReply]
+}
+
 struct AuthResponse: Codable {
     let user: UserAccount
 }

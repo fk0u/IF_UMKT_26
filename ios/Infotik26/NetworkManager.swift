@@ -7,6 +7,7 @@ class NetworkManager: ObservableObject {
     @Published var news: [NewsItem] = []
     @Published var tasks: [TaskItem] = []
     @Published var schedules: [ScheduleItem] = []
+    @Published var forumThreads: [ForumThread] = []
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
 
@@ -42,6 +43,7 @@ class NetworkManager: ObservableObject {
             self.news = []
             self.tasks = []
             self.schedules = []
+            self.forumThreads = []
         }
     }
 
@@ -101,13 +103,15 @@ class NetworkManager: ObservableObject {
         async let fetchedNews = fetchNews()
         async let fetchedTasks = fetchTasks()
         async let fetchedSchedules = fetchSchedules()
+        async let fetchedForum = fetchForum()
         
-        let (n, t, s) = await (fetchedNews, fetchedTasks, fetchedSchedules)
+        let (n, t, s, f) = await (fetchedNews, fetchedTasks, fetchedSchedules, fetchedForum)
         
         DispatchQueue.main.async {
             self.news = n
             self.tasks = t
             self.schedules = s
+            self.forumThreads = f
             self.isLoading = false
         }
     }
@@ -139,6 +143,134 @@ class NetworkManager: ObservableObject {
             return (try? JSONDecoder().decode([ScheduleItem].self, from: data)) ?? []
         } catch {
             return []
+        }
+    }
+
+    func fetchForum() async -> [ForumThread] {
+        guard let url = URL(string: "\(baseURLString)/api/forum") else { return [] }
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            return (try? JSONDecoder().decode([ForumThread].self, from: data)) ?? []
+        } catch {
+            return []
+        }
+    }
+
+    // FORUM ACTIONS
+    func createThread(title: String, category: String, content: String) async -> Bool {
+        guard let url = URL(string: "\(baseURLString)/api/forum"),
+              let user = currentUser else { return false }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body = [
+            "title": title,
+            "category": category,
+            "content": content,
+            "author": user.name,
+            "nim": user.nim
+        ]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 201 {
+                await refreshForum()
+                return true
+            }
+        } catch {}
+        return false
+    }
+
+    func upvoteThread(threadId: String) async {
+        guard let url = URL(string: "\(baseURLString)/api/forum/\(threadId)/upvote") else { return }
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        
+        do {
+            let (_, _) = try await URLSession.shared.data(for: request)
+            await refreshForum()
+        } catch {}
+    }
+
+    func addReply(threadId: String, content: String) async -> Bool {
+        guard let url = URL(string: "\(baseURLString)/api/forum/\(threadId)/replies"),
+              let user = currentUser else { return false }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body = ["author": user.name, "content": content]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                await refreshForum()
+                return true
+            }
+        } catch {}
+        return false
+    }
+
+    // ADMIN MODERATION ACTIONS
+    func updateThread(threadId: String, title: String, category: String, content: String) async -> Bool {
+        guard let url = URL(string: "\(baseURLString)/api/forum/\(threadId)") else { return false }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "PUT"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        
+        let body = ["title": title, "category": category, "content": content]
+        request.httpBody = try? JSONSerialization.data(withJSONObject: body)
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                await refreshForum()
+                return true
+            }
+        } catch {}
+        return false
+    }
+
+    func deleteThread(threadId: String) async -> Bool {
+        guard let url = URL(string: "\(baseURLString)/api/forum/\(threadId)") else { return false }
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                await refreshForum()
+                return true
+            }
+        } catch {}
+        return false
+    }
+
+    func deleteReply(threadId: String, replyIndex: Int) async -> Bool {
+        guard let url = URL(string: "\(baseURLString)/api/forum/\(threadId)/replies/\(replyIndex)") else { return false }
+        var request = URLRequest(url: url)
+        request.httpMethod = "DELETE"
+        
+        do {
+            let (_, response) = try await URLSession.shared.data(for: request)
+            if let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 {
+                await refreshForum()
+                return true
+            }
+        } catch {}
+        return false
+    }
+
+    func refreshForum() async {
+        let f = await fetchForum()
+        DispatchQueue.main.async {
+            self.forumThreads = f
         }
     }
 }

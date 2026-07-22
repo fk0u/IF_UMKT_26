@@ -18,13 +18,19 @@ struct HomeView: View {
                     Label("Jadwal", systemImage: "calendar")
                 }
             
-            // Tab 3: Assignments List
+            // Tab 3: Forum Discussion
+            ForumView()
+                .tabItem {
+                    Label("Forum", systemImage: "bubble.left.and.bubble.right.fill")
+                }
+            
+            // Tab 4: Assignments List
             TasksView()
                 .tabItem {
                     Label("Tugas", systemImage: "checklist")
                 }
             
-            // Tab 4: Student Profile
+            // Tab 5: Student Profile
             ProfileView()
                 .tabItem {
                     Label("Profil", systemImage: "person.crop.circle.fill")
