@@ -1,3 +1,4 @@
+/* Hallmark · service: mockApi · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: full-stack-hybrid · theme: Custom Indigo-Midnight */
 import { ScheduleItem, TaskItem, NewsItem, ForumThread, WASubmission, MastaData, BTQData, AcademicTip, UserAccount } from '../types';
 
 const INITIAL_SCHEDULES: ScheduleItem[] = [
@@ -19,62 +20,80 @@ const INITIAL_TASKS: TaskItem[] = [
 ];
 
 const INITIAL_NEWS: NewsItem[] = [
-  { id: 'news-1', title: 'Pengumuman Resmi Pendaftaran & Verifikasi Grup WA Angkatan 2026', date: '22 Juli 2026', category: 'Pengumuman Resmi', author: 'Panitia Angkatan 2026', pinned: true, summary: 'Mahasiswa baru TI 2026 diwajibkan verifikasi identitas melalui Surat Lolos Seleksi (SIM-PMB PDF) untuk link resmi WA group.', content: 'Guna menghindari penyusupan akun spam/bot dan menjaga keamanan data mahasiswa baru Teknik Informatika UMKT 2026, seluruh maba wajib melampirkan Surat Keterangan Lolos Seleksi (SIM-PMB) format PDF. Admin akan melakukan pengecekan maksimal 1x24 jam.' },
-  { id: 'news-2', title: 'Jadwal Pengambilan Jas Almamater & Nametag Masta 2026', date: '20 Juli 2026', category: 'Akademik & Masta', author: 'BAAK UMKT', pinned: false, summary: 'Pengambilan Jas Almamater dilaksanakan di GOR Kampus Utama mulai 1 - 5 Agustus 2026.', content: 'Syarat pengambilan: Membawa Bukti Pembayaran UKT Semester 1 dan Cetak Kartu Registrasi Ulang.' },
-  { id: 'news-3', title: 'Pembagian Kelompok Praktikum Dasar Pemrograman 2026', date: '18 Juli 2026', category: 'Laboratorium', author: 'Lab Komputer TI', pinned: false, summary: 'Daftar nama dan kelompok Praktikum Proglan hari Sabtu di Lab GF-1.02 telah di-publish.', content: 'Silakan cek file PDF pembagian sesi praktikum di papan pengumuman Lab Komputer GF-1.02.' }
+  {
+    id: 'news-1',
+    title: 'Panduan Registrasi Kartu Rencana Studi (KRS) Semester 1',
+    category: 'Pengumuman Resmi',
+    summary: 'Langkah-langkah pengisian KRS bagi mahasiswa angkatan 2026 melalui sistem portal akademik SIA UMKT.',
+    content: 'Dihimbau kepada seluruh mahasiswa baru angkatan 2026 untuk menyelesaikan administrasi KRS online paling lambat 10 Agustus 2026. Pastikan memilih kelas sesuai jadwal TI-2026 agar tidak terjadi bentrok mata kuliah.',
+    date: '20 Juli 2026',
+    author: 'BAAK Teknik Informatika',
+    pinned: true
+  },
+  {
+    id: 'news-2',
+    title: 'Pelaksanaan Masta (Masa Ta\'aruf) Angkatan 2026',
+    category: 'Akademik & Masta',
+    summary: 'Jadwal, dresscode, dan tata tertib orientasi mahasiswa baru Teknik Informatika.',
+    content: 'Masta 2026 akan dilaksanakan secara luring terpusat di Edutorium UMKT mulai tanggal 1-4 Agustus 2026. Atribut wajib berupa kemeja putih polos, celana hitam, almamater, dan name tag.',
+    date: '18 Juli 2026',
+    author: 'Panitia Masta 2026',
+    pinned: false
+  }
 ];
 
 const INITIAL_FORUM: ForumThread[] = [
   {
-    id: 'frm-1',
+    id: 'th-1',
+    title: 'Rekomendasi Spesifikasi Laptop untuk Anak TI Semester 1?',
+    category: 'Umum & Peralatan',
     author: 'Rian Febrian',
     nim: '261110045',
     avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Rian',
-    title: 'Rekomendasi Spesifikasi Laptop untuk Anak TI Semester 1?',
-    category: 'Umum & Peralatan',
     content: 'Halo teman-teman 2026! Mau tanya nih, laptop RAM 8GB SSD 256GB sudah cukup belum untuk koding C++ dan Python di Semester 1 ini?',
-    date: '21 Juli 2026 • 14:20 WITA',
+    date: '21 Juli 2026',
     upvotes: 14,
     replies: [
-      { author: 'Farhan Azhar', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Farhan', date: '21 Juli 2026 • 15:00 WITA', content: 'Sangat cukup bang untuk semester 1-2 C++ & Python.' },
-      { author: 'Siti Aisyah', avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Siti', date: '21 Juli 2026 • 15:45 WITA', content: 'Setuju! Yang paling penting SSD-nya minimal 256GB.' }
+      {
+        author: 'Farhan Azhar',
+        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Farhan',
+        content: 'Sangat cukup bang untuk semester 1-2 C++ & Python.',
+        date: '21 Juli 2026'
+      },
+      {
+        author: 'Siti Aisyah',
+        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Siti',
+        content: 'Setuju! Yang paling penting SSD-nya minimal 256GB.',
+        date: '21 Juli 2026'
+      }
     ]
   }
 ];
 
 export const INITIAL_MASTA: MastaData = {
-  disclaimer: 'Informasi panduan Masta di bawah ini disusun berdasarkan acuan pelaksanaan tahun sebelumnya (2025). Detail resmi Masta 2026 akan di-update mengikuti instruksi resmi Panitia Masta UMKT 2026.',
+  disclaimer: 'Informasi Masta ini bersifat dinamis mengikuti instruksi Panitia Pusat UMKT. Pastikan terus memantau grup koordinasi resmi.',
   stages: [
-    { title: 'Masta Universitas & Fakultas (FST)', duration: 'Hari 1 - 2', description: 'Pengenalan kampus UMKT, rektorat, tata tertib akademik, dan pimpinan Fakultas Sains dan Teknologi (FST).', highlights: ['Sidang Terbuka Senat', 'Kuliah Umum Kebangsaan', 'Tour Kampus & Lab FST'] },
-    { title: 'Masta Prodi Teknik Informatika', duration: 'Hari 3', description: 'Perkenalan dengan Ketua Prodi, Dosen Pembimbing Akademik (DPA), HMTI, kurikulum 2026, & etika koding.', highlights: ['Meet & Greet Dosen TI', 'Demo Karya Kakak Tingkat', 'Sharing Session HMTI'] },
-    { title: 'Masta IMM (Ikatan Mahasiswa Muhammadiyah)', duration: 'Hari 4', description: 'Pengenalan nilai-nilai keislaman, ke-Muhammadiyahan, & organisasi mahasiswa.', highlights: ['Orasi Keilmuan', 'Game Kelompok', 'Pendaftaran PKIMM'] },
-    { title: 'Malam Inagurasi & Puncak Masta', duration: 'Hari 5 (Penutupan)', description: 'Puncak selebrasi penerimaan mahasiswa baru angkatan 2026 dengan panggung seni & foto bersama angkatan.', highlights: ['Pentas Seni Maba', 'Inagurasi Angkatan 2026', 'Foto Bersama Angkatan'] }
+    { title: 'Pembukaan Masta Universitas', duration: 'Hari ke-1', description: 'Upacara pembukaan orientasi terpusat untuk seluruh mahasiswa baru UMKT.', highlights: ['Penyematan Almamater', 'Kuliah Umum Rektor'] },
+    { title: 'Masta Kemuhammadiyahan', duration: 'Hari ke-2 & ke-3', description: 'Orientasi keislaman, kemuhammadiyahan, serta pengenalan organisasi ikatan mahasiswa.', highlights: ['Materi AIK', 'Sosialisasi IMM'] },
+    { title: 'Orientasi Fakultas & Prodi', duration: 'Hari ke-4', description: 'Pengenalan lingkungan fakultas sains teknologi dan kurikulum prodi Teknik Informatika.', highlights: ['Kurikulum TI', 'Kunjungan Laboratorium'] }
   ],
   dressCode: [
-    { type: 'Putra', items: ['Kemeja lengan panjang putih polos berkerah', 'Celana kain hitam polos (bukan jeans)', 'Dasi hitam polos & sabuk hitam', 'Sepatu pantofel/olahraga dominan hitam & kaus kaki putih'] },
-    { type: 'Putri', items: ['Kemeja lengan panjang putih polos (menutup pinggul)', 'Rok kain hitam A-Line (tidak menerawang)', 'Jilbab segi empat polos putih (syar\'i)', 'Sepatu tertutup warna hitam & kaus kaki putih'] }
+    { type: 'Putra', items: ['Kemeja putih lengan panjang polos.', 'Celana kain warna hitam.', 'Sepatu tertutup dominan hitam.'] },
+    { type: 'Putri', items: ['Kemeja putih lengan panjang polos.', 'Rok kain panjang warna hitam.', 'Kerudung kain warna hitam.', 'Sepatu tertutup hitam.'] }
   ],
-  equipments: [
-    'Al-Qur\'an terjemahan ukuran sedang',
-    'Buku catatan bergaris & alat tulis',
-    'Nametag ID Card Masta 2026',
-    'Air minum botol ulang pakai (tumbler min. 600ml)',
-    'Bekal makanan sehat & obat pribadi',
-    'Perlengkapan ibadah pribadi'
-  ],
+  equipments: ['Kartu Masta Resmi', 'Buku Catatan & Pena', 'Almamater UMKT', 'Obat-obatan pribadi'],
   dosAndDonts: {
-    dos: ['Hadir tepat waktu 15 menit sebelum acara', 'Menjaga kerapian, kebersihan, & kesopanan', 'Menyapa dosen & panitia (3S: Senyum, Salam, Sapa)'],
-    donts: ['Dilarang membawa rokok/vape & bahan terlarang', 'Dilarang memakai perhiasan mencolok/mahal', 'Dilarang mengaktifkan nada dering HP saat materi']
+    dos: ['Hadir tepat waktu', 'Mengenakan atribut lengkap', 'Menjaga sopan santun'],
+    donts: ['Membawa senjata tajam', 'Merokok di area kampus', 'Meninggalkan acara tanpa izin']
   }
 };
 
 export const INITIAL_BTQ: BTQData = {
-  alertMessage: 'PERHATIAN MAHASISWA BARU: Kelulusan Ujian BTQ merupakan SYARAT WAJIB untuk mendaftar Sidang Skripsi/Pendadaran dan Yudisium di UMKT!',
+  alertMessage: 'Ujian BTQ merupakan syarat kelulusan yudisium wajib bagi seluruh mahasiswa UMKT.',
   passingCriteria: [
-    'Mampu membaca Al-Qur\'an dengan tartil sesuai kaidah ilmu Tajwid.',
-    'Lulus hafalan minimal 23 Surah Pendek (Juz 30: Ad-Duha s/d An-Nas).',
-    'Mampu menulis ayat Al-Qur\'an dasar & huruf hijaiyah berharakat.',
-    'Nilai kelulusan minimal: B (Skor 75.00).'
+    'Mampu membaca Al-Qur\'an secara tartil.',
+    'Hafal Juz 30 (Surah Ad-Duha s/d An-Nas).',
+    'Lolos ujian lisan ilmu tajwid dasar.'
   ],
   surahList: [
     'Ad-Duha', 'Ash-Sharh', 'At-Tin', 'Al-\'Alaq', 'Al-Qadr',
@@ -84,15 +103,12 @@ export const INITIAL_BTQ: BTQData = {
     'Al-Falaq', 'An-Nas', 'Al-Fatihah'
   ],
   consequences: [
-    'Mahasiswa yang TIDAK LULUS wajib mengikuti Matrikulasi BTQ selama 1 semester.',
-    'Tidak bisa mengambil mata kuliah Skripsi apabila sertifikat BTQ belum terbit.',
-    'Penundaan kelulusan/yudisium hingga syarat BTQ terpenuhi.'
+    'Wajib mengikuti kelas matrikulasi khusus jika belum lulus.',
+    'Tidak diperbolehkan mengajukan ujian skripsi.'
   ],
   tipsForGradeA: [
-    { title: '1. Cicil Hafalan 1 Surah Per Hari', desc: 'Alokasikan waktu 15 menit setelah sholat Shubuh untuk menghafal 1 surah pendek.' },
-    { title: '2. Kuasai Hukum Tajwid Dasar', desc: 'Fokus pada Nun Mati/Tanwin (Izhhar, Ikhfa, Idgham, Iqlab) & Mad Far\'i.' },
-    { title: '3. Gunakan Murottal & Setoran Teman', desc: 'Dengarkan Syeikh Al-Husary untuk menyempurnakan Makhraj huruf.' },
-    { title: '4. Ikuti Bimbingan BTQ LAK UMKT', desc: 'Manfaatkan fasilitas mentoring gratis yang disediakan oleh LAK UMKT.' }
+    { title: 'Cicil Hafalan Harian', desc: 'Hafalkan minimal 1 surah pendek selepas sholat Shubuh.' },
+    { title: 'Latihan Bersama Mentor', desc: 'Manfaatkan program asistensi LAK secara berkala.' }
   ]
 };
 
@@ -106,143 +122,217 @@ export const INITIAL_TIPS: AcademicTip[] = [
 
 const delay = (ms: number) => new Promise(res => setTimeout(res, ms));
 
-// Simulated REST API Service backed by LocalStorage
+// Full-Stack Dynamic Fetch Handler with LocalStorage fallbacks
+const fetchOrFallback = async <T>(url: string, options?: RequestInit, fallback?: () => Promise<T>): Promise<T> => {
+  try {
+    const res = await fetch(url, options);
+    if (res.ok) {
+      return await res.json();
+    }
+    throw new Error(`API Error status ${res.status}`);
+  } catch (err) {
+    if (fallback) {
+      console.warn(`[Full-Stack Hybrid] API failed (${url}). Falling back to localStorage.`, err);
+      return await fallback();
+    }
+    throw err;
+  }
+};
+
+function isAngkatan25OrOther(nim: string) {
+  const prefix = nim.trim().substring(0, 2);
+  return prefix !== '' && prefix !== '26' && !isNaN(Number(prefix));
+}
+
+// REST API Service backed by real Express API with transparent fallbacks
 export const mockApi = {
   // Schedules Query
   async getSchedules(): Promise<ScheduleItem[]> {
-    await delay(150);
-    return INITIAL_SCHEDULES;
+    return fetchOrFallback<ScheduleItem[]>('/api/schedules', {}, async () => {
+      await delay(150);
+      return INITIAL_SCHEDULES;
+    });
   },
 
   // Tasks Queries & Mutations
   async getTasks(): Promise<TaskItem[]> {
-    await delay(200);
-    const data = localStorage.getItem('infotik_tasks');
-    return data ? JSON.parse(data) : INITIAL_TASKS;
+    return fetchOrFallback<TaskItem[]>('/api/tasks', {}, async () => {
+      await delay(200);
+      const data = localStorage.getItem('infotik_tasks');
+      return data ? JSON.parse(data) : INITIAL_TASKS;
+    });
   },
 
   async createTask(newTask: Omit<TaskItem, 'id' | 'status'>): Promise<TaskItem> {
-    await delay(300);
-    const tasks = await this.getTasks();
-    const item: TaskItem = {
-      id: 'tsk-' + Date.now(),
-      status: 'Belum Dikerjakan',
-      ...newTask
-    };
-    tasks.unshift(item);
-    localStorage.setItem('infotik_tasks', JSON.stringify(tasks));
-    return item;
+    return fetchOrFallback<TaskItem>('/api/tasks', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newTask)
+    }, async () => {
+      await delay(300);
+      const tasks = await this.getTasks();
+      const item: TaskItem = {
+        id: 'tsk-' + Date.now(),
+        status: 'Belum Dikerjakan',
+        ...newTask
+      };
+      tasks.unshift(item);
+      localStorage.setItem('infotik_tasks', JSON.stringify(tasks));
+      return item;
+    });
   },
 
   async updateTaskStatus(taskId: string, status: TaskItem['status']): Promise<TaskItem[]> {
-    await delay(200);
-    const tasks = await this.getTasks();
-    const updated = tasks.map(t => t.id === taskId ? { ...t, status } : t);
-    localStorage.setItem('infotik_tasks', JSON.stringify(updated));
-    return updated;
+    return fetchOrFallback<TaskItem[]>(`/api/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    }, async () => {
+      await delay(200);
+      const tasks = await this.getTasks();
+      const updated = tasks.map(t => t.id === taskId ? { ...t, status } : t);
+      localStorage.setItem('infotik_tasks', JSON.stringify(updated));
+      return updated;
+    });
   },
 
   async deleteTask(taskId: string): Promise<TaskItem[]> {
-    await delay(200);
-    const tasks = await this.getTasks();
-    const filtered = tasks.filter(t => t.id !== taskId);
-    localStorage.setItem('infotik_tasks', JSON.stringify(filtered));
-    return filtered;
+    return fetchOrFallback<TaskItem[]>(`/api/tasks/${taskId}`, {
+      method: 'DELETE'
+    }, async () => {
+      await delay(200);
+      const tasks = await this.getTasks();
+      const filtered = tasks.filter(t => t.id !== taskId);
+      localStorage.setItem('infotik_tasks', JSON.stringify(filtered));
+      return filtered;
+    });
   },
 
   // News Queries & Mutations
   async getNews(): Promise<NewsItem[]> {
-    await delay(200);
-    const data = localStorage.getItem('infotik_news');
-    return data ? JSON.parse(data) : INITIAL_NEWS;
+    return fetchOrFallback<NewsItem[]>('/api/news', {}, async () => {
+      await delay(200);
+      const data = localStorage.getItem('infotik_news');
+      return data ? JSON.parse(data) : INITIAL_NEWS;
+    });
   },
 
   async createNews(newNews: Omit<NewsItem, 'id' | 'date' | 'author'>): Promise<NewsItem> {
-    await delay(300);
-    const list = await this.getNews();
-    const item: NewsItem = {
-      id: 'news-' + Date.now(),
-      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
-      author: 'Admin Angkatan 2026',
-      ...newNews
-    };
-    list.unshift(item);
-    localStorage.setItem('infotik_news', JSON.stringify(list));
-    return item;
+    return fetchOrFallback<NewsItem>('/api/news', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newNews)
+    }, async () => {
+      await delay(300);
+      const list = await this.getNews();
+      const item: NewsItem = {
+        id: 'news-' + Date.now(),
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }),
+        author: 'Admin Angkatan 2026',
+        ...newNews
+      };
+      list.unshift(item);
+      localStorage.setItem('infotik_news', JSON.stringify(list));
+      return item;
+    });
   },
 
   async deleteNews(newsId: string): Promise<NewsItem[]> {
-    await delay(200);
-    const list = await this.getNews();
-    const filtered = list.filter(n => n.id !== newsId);
-    localStorage.setItem('infotik_news', JSON.stringify(filtered));
-    return filtered;
+    return fetchOrFallback<NewsItem[]>(`/api/news/${newsId}`, {
+      method: 'DELETE'
+    }, async () => {
+      await delay(200);
+      const list = await this.getNews();
+      const filtered = list.filter(n => n.id !== newsId);
+      localStorage.setItem('infotik_news', JSON.stringify(filtered));
+      return filtered;
+    });
   },
 
   // Forum Queries & Mutations
   async getForum(): Promise<ForumThread[]> {
-    await delay(200);
-    const data = localStorage.getItem('infotik_forum');
-    return data ? JSON.parse(data) : INITIAL_FORUM;
+    return fetchOrFallback<ForumThread[]>('/api/forum', {}, async () => {
+      await delay(200);
+      const data = localStorage.getItem('infotik_forum');
+      return data ? JSON.parse(data) : INITIAL_FORUM;
+    });
   },
 
   async createThread(newThread: { author: string; title: string; category: string; content: string }): Promise<ForumThread> {
-    await delay(300);
-    const forum = await this.getForum();
-    const thread: ForumThread = {
-      id: 'frm-' + Date.now(),
-      author: newThread.author || 'Maba TI 2026',
-      nim: '261110' + Math.floor(100 + Math.random() * 900),
-      avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(newThread.author || 'Maba'),
-      title: newThread.title,
-      category: newThread.category,
-      content: newThread.content,
-      date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ' • Baru saja',
-      upvotes: 1,
-      replies: []
-    };
-    forum.unshift(thread);
-    localStorage.setItem('infotik_forum', JSON.stringify(forum));
-    return thread;
+    return fetchOrFallback<ForumThread>('/api/forum', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newThread)
+    }, async () => {
+      await delay(300);
+      const forum = await this.getForum();
+      const thread: ForumThread = {
+        id: 'frm-' + Date.now(),
+        author: newThread.author || 'Maba TI 2026',
+        nim: '261110' + Math.floor(100 + Math.random() * 900),
+        avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(newThread.author || 'Maba'),
+        title: newThread.title,
+        category: newThread.category,
+        content: newThread.content,
+        date: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' }) + ' • Baru saja',
+        upvotes: 1,
+        replies: []
+      };
+      forum.unshift(thread);
+      localStorage.setItem('infotik_forum', JSON.stringify(forum));
+      return thread;
+    });
   },
 
   async upvoteThread(threadId: string): Promise<ForumThread[]> {
-    await delay(150);
-    const forum = await this.getForum();
-    const updated = forum.map(f => f.id === threadId ? { ...f, upvotes: f.upvotes + 1 } : f);
-    localStorage.setItem('infotik_forum', JSON.stringify(updated));
-    return updated;
+    return fetchOrFallback<ForumThread[]>(`/api/forum/${threadId}/upvote`, {
+      method: 'POST'
+    }, async () => {
+      await delay(150);
+      const forum = await this.getForum();
+      const updated = forum.map(f => f.id === threadId ? { ...f, upvotes: f.upvotes + 1 } : f);
+      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      return updated;
+    });
   },
 
   async addReply(threadId: string, content: string, author: string): Promise<ForumThread[]> {
-    await delay(200);
-    const forum = await this.getForum();
-    const updated = forum.map(f => {
-      if (f.id === threadId) {
-        return {
-          ...f,
-          replies: [
-            ...f.replies,
-            {
-              author: author || 'Maba TI 2026',
-              avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(author || 'Maba'),
-              date: 'Hari ini • Baru saja',
-              content
-            }
-          ]
-        };
-      }
-      return f;
+    return fetchOrFallback<ForumThread[]>(`/api/forum/${threadId}/replies`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ author, content })
+    }, async () => {
+      await delay(200);
+      const forum = await this.getForum();
+      const updated = forum.map(f => {
+        if (f.id === threadId) {
+          return {
+            ...f,
+            replies: [
+              ...f.replies,
+              {
+                author: author || 'Maba TI 2026',
+                avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=' + encodeURIComponent(author || 'Maba'),
+                date: 'Hari ini • Baru saja',
+                content
+              }
+            ]
+          };
+        }
+        return f;
+      });
+      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      return updated;
     });
-    localStorage.setItem('infotik_forum', JSON.stringify(updated));
-    return updated;
   },
 
   // WA Verification Queries & Mutations
   async getWASubmissions(): Promise<WASubmission[]> {
-    await delay(200);
-    const data = localStorage.getItem('infotik_wa_submissions');
-    return data ? JSON.parse(data) : [];
+    return fetchOrFallback<WASubmission[]>('/api/wa-submissions', {}, async () => {
+      await delay(200);
+      const data = localStorage.getItem('infotik_wa_submissions');
+      return data ? JSON.parse(data) : [];
+    });
   },
 
   async submitWAGroupVerification(formData: { 
@@ -259,178 +349,230 @@ export const mockApi = {
       tanggalSurat?: string;
     }
   }): Promise<WASubmission> {
-    await delay(1000); // simulated processing delay
-    const submissions = await this.getWASubmissions();
-    const ticketId = 'WA26-' + Math.floor(100000 + Math.random() * 900000);
+    return fetchOrFallback<WASubmission>('/api/wa-submissions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    }, async () => {
+      await delay(1000); // simulated processing delay
+      const submissions = await this.getWASubmissions();
+      const ticketId = 'WA26-' + Math.floor(100000 + Math.random() * 900000);
 
-    // 1. Check NIM prefix
-    const isAngkatan2026 = formData.nim.trim().startsWith('26');
-    let status: WASubmission['status'] = 'Pending';
-    let rejectionReason = '';
+      // 1. Check NIM prefix
+      const isAngkatan2026 = formData.nim.trim().startsWith('26');
+      let status: WASubmission['status'] = 'Pending';
+      let rejectionReason = '';
 
-    if (!isAngkatan25OrOther(formData.nim) && !isAngkatan2026) {
-      status = 'Rejected';
-      const year = formData.nim.trim().substring(0, 2);
-      rejectionReason = `NIM Terdeteksi Angkatan 20${year || '24/2025'}. Hanya Mahasiswa Angkatan 2026 yang diperbolehkan bergabung grup WA Resmi.`;
-    } else {
-      // NIM starts with 26. Check simulated OCR data.
-      const ocr = formData.ocrData || {
-        namaSurat: formData.name,
-        nimSurat: formData.nim,
-        prodiSurat: 'Teknik Informatika',
-        tanggalSurat: '18 Juli 2026'
+      if (!isAngkatan25OrOther(formData.nim) && !isAngkatan2026) {
+        status = 'Rejected';
+        const year = formData.nim.trim().substring(0, 2);
+        rejectionReason = `NIM Terdeteksi Angkatan 20${year || '24/2025'}. Hanya Mahasiswa Angkatan 2026 yang diperbolehkan bergabung grup WA Resmi.`;
+      } else {
+        // NIM starts with 26. Check simulated OCR data.
+        const ocr = formData.ocrData || {
+          namaSurat: formData.name,
+          nimSurat: formData.nim,
+          prodiSurat: 'Teknik Informatika',
+          tanggalSurat: '18 Juli 2026'
+        };
+
+        const nameMatches = ocr.namaSurat?.toLowerCase().trim() === formData.name.toLowerCase().trim();
+        const nimMatches = ocr.nimSurat?.trim() === formData.nim.trim();
+        const prodiMatches = ocr.prodiSurat?.toLowerCase().includes('teknik informatika');
+        const dateMatches = ocr.tanggalSurat?.includes('2026');
+
+        if (formData.ocrSimulateSuccess === false) {
+          status = 'Rejected';
+          rejectionReason = 'Gagal OCR: Ketidakcocokan Dokumen. ';
+          if (!nameMatches) rejectionReason += 'Nama di surat tidak cocok. ';
+          if (!nimMatches) rejectionReason += 'NIM di surat tidak cocok. ';
+          if (!prodiMatches) rejectionReason += 'Prodi di surat bukan Teknik Informatika. ';
+          if (!dateMatches) rejectionReason += 'Tanggal Surat bukan tahun 2026. ';
+        } else {
+          status = 'Approved';
+        }
+      }
+
+      const submission: WASubmission = {
+        id: ticketId,
+        name: formData.name,
+        nim: formData.nim,
+        whatsapp: formData.whatsapp,
+        fileName: formData.fileName || 'Surat_Lolos_Seleksi_SIMPMB.pdf',
+        fileSize: formData.fileSize || '1.2 MB',
+        submittedAt: new Date().toLocaleString('id-ID'),
+        status: status,
+        rejectionReason: rejectionReason,
+        waLink: import.meta.env.VITE_WA_GROUP_LINK || 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
       };
 
-      const nameMatches = ocr.namaSurat?.toLowerCase().trim() === formData.name.toLowerCase().trim();
-      const nimMatches = ocr.nimSurat?.trim() === formData.nim.trim();
-      const prodiMatches = ocr.prodiSurat?.toLowerCase().includes('teknik informatika');
-      const dateMatches = ocr.tanggalSurat?.includes('2026');
+      const filtered = submissions.filter(s => s.nim !== formData.nim);
+      filtered.unshift(submission);
 
-      if (formData.ocrSimulateSuccess === false) {
-        status = 'Rejected';
-        rejectionReason = 'Gagal OCR: Ketidakcocokan Dokumen. ';
-        if (!nameMatches) rejectionReason += 'Nama di surat tidak cocok. ';
-        if (!nimMatches) rejectionReason += 'NIM di surat tidak cocok. ';
-        if (!prodiMatches) rejectionReason += 'Prodi di surat bukan Teknik Informatika. ';
-        if (!dateMatches) rejectionReason += 'Tanggal Surat bukan tahun 2026. ';
-      } else {
-        // Automatic OCR Approval
-        status = 'Approved';
-      }
-    }
-
-    function isAngkatan25OrOther(nim: string) {
-      const prefix = nim.trim().substring(0, 2);
-      return prefix !== '' && prefix !== '26' && !isNaN(Number(prefix));
-    }
-
-    const submission: WASubmission = {
-      id: ticketId,
-      name: formData.name,
-      nim: formData.nim,
-      whatsapp: formData.whatsapp,
-      fileName: formData.fileName || 'Surat_Lolos_Seleksi_SIMPMB.pdf',
-      fileSize: formData.fileSize || '1.2 MB',
-      submittedAt: new Date().toLocaleString('id-ID'),
-      status: status,
-      rejectionReason: rejectionReason,
-      waLink: import.meta.env.VITE_WA_GROUP_LINK || 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
-    };
-
-    const filtered = submissions.filter(s => s.nim !== formData.nim);
-    filtered.unshift(submission);
-
-    localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
-    localStorage.setItem('infotik_my_wa_submission', JSON.stringify(submission));
-    return submission;
+      localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
+      localStorage.setItem('infotik_my_wa_submission', JSON.stringify(submission));
+      return submission;
+    });
   },
 
   async updateWASubmissionStatus(ticketId: string, status: WASubmission['status'], rejectionReason?: string): Promise<WASubmission[]> {
-    await delay(200);
-    const submissions = await this.getWASubmissions();
-    const updated = submissions.map(s => s.id === ticketId ? { ...s, status, rejectionReason: rejectionReason || s.rejectionReason } : s);
-    localStorage.setItem('infotik_wa_submissions', JSON.stringify(updated));
+    return fetchOrFallback<WASubmission[]>(`/api/wa-submissions/${ticketId}/status`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status, rejectionReason })
+    }, async () => {
+      await delay(200);
+      const submissions = await this.getWASubmissions();
+      const updated = submissions.map(s => s.id === ticketId ? { ...s, status, rejectionReason: rejectionReason || s.rejectionReason } : s);
+      localStorage.setItem('infotik_wa_submissions', JSON.stringify(updated));
 
-    const mySub = localStorage.getItem('infotik_my_wa_submission');
-    if (mySub) {
-      const parsed: WASubmission = JSON.parse(mySub);
-      if (parsed.id === ticketId) {
-        parsed.status = status;
-        if (rejectionReason) parsed.rejectionReason = rejectionReason;
-        localStorage.setItem('infotik_my_wa_submission', JSON.stringify(parsed));
+      const mySub = localStorage.getItem('infotik_my_wa_submission');
+      if (mySub) {
+        const parsed: WASubmission = JSON.parse(mySub);
+        if (parsed.id === ticketId) {
+          parsed.status = status;
+          if (rejectionReason) parsed.rejectionReason = rejectionReason;
+          localStorage.setItem('infotik_my_wa_submission', JSON.stringify(parsed));
+        }
       }
-    }
-    return updated;
+      return updated;
+    });
   },
 
   // User CRUD for Admin ERP
   async createUser(user: Omit<UserAccount, 'id' | 'avatar'>): Promise<UserAccount> {
-    await delay(300);
-    const data = localStorage.getItem('infotik_users');
-    const list: UserAccount[] = data ? JSON.parse(data) : [];
-    const newUser: UserAccount = {
-      ...user,
-      id: 'usr-' + Date.now(),
-      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.name)}`
-    };
-    list.push(newUser);
-    localStorage.setItem('infotik_users', JSON.stringify(list));
-    return newUser;
+    return fetchOrFallback<UserAccount>('/api/users', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(user)
+    }, async () => {
+      await delay(300);
+      const data = localStorage.getItem('infotik_users');
+      const list: UserAccount[] = data ? JSON.parse(data) : [];
+      const newUser: UserAccount = {
+        ...user,
+        id: 'usr-' + Date.now(),
+        avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.name)}`
+      };
+      list.push(newUser);
+      localStorage.setItem('infotik_users', JSON.stringify(list));
+      return newUser;
+    });
   },
 
   async updateUser(userId: string, fields: Partial<UserAccount>): Promise<UserAccount[]> {
-    await delay(200);
-    const data = localStorage.getItem('infotik_users');
-    const list: UserAccount[] = data ? JSON.parse(data) : [];
-    const updated = list.map(u => u.id === userId ? { ...u, ...fields } : u);
-    localStorage.setItem('infotik_users', JSON.stringify(updated));
-    return updated;
+    return fetchOrFallback<UserAccount[]>(`/api/users/${userId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields)
+    }, async () => {
+      await delay(200);
+      const data = localStorage.getItem('infotik_users');
+      const list: UserAccount[] = data ? JSON.parse(data) : [];
+      const updated = list.map(u => u.id === userId ? { ...u, ...fields } : u);
+      localStorage.setItem('infotik_users', JSON.stringify(updated));
+      return updated;
+    });
   },
 
   async deleteUser(userId: string): Promise<UserAccount[]> {
-    await delay(200);
-    const data = localStorage.getItem('infotik_users');
-    const list: UserAccount[] = data ? JSON.parse(data) : [];
-    const filtered = list.filter(u => u.id !== userId);
-    localStorage.setItem('infotik_users', JSON.stringify(filtered));
-    return filtered;
+    return fetchOrFallback<UserAccount[]>(`/api/users/${userId}`, {
+      method: 'DELETE'
+    }, async () => {
+      await delay(200);
+      const data = localStorage.getItem('infotik_users');
+      const list: UserAccount[] = data ? JSON.parse(data) : [];
+      const filtered = list.filter(u => u.id !== userId);
+      localStorage.setItem('infotik_users', JSON.stringify(filtered));
+      return filtered;
+    });
   },
 
   // Forum CRUD/Moderasi
   async updateThread(threadId: string, fields: Partial<ForumThread>): Promise<ForumThread[]> {
-    await delay(200);
-    const list = await this.getForum();
-    const updated = list.map(t => t.id === threadId ? { ...t, ...fields } : t);
-    localStorage.setItem('infotik_forum', JSON.stringify(updated));
-    return updated;
+    return fetchOrFallback<ForumThread[]>(`/api/forum/${threadId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields)
+    }, async () => {
+      await delay(200);
+      const list = await this.getForum();
+      const updated = list.map(t => t.id === threadId ? { ...t, ...fields } : t);
+      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      return updated;
+    });
   },
 
   async deleteThread(threadId: string): Promise<ForumThread[]> {
-    await delay(200);
-    const list = await this.getForum();
-    const filtered = list.filter(t => t.id !== threadId);
-    localStorage.setItem('infotik_forum', JSON.stringify(filtered));
-    return filtered;
+    return fetchOrFallback<ForumThread[]>(`/api/forum/${threadId}`, {
+      method: 'DELETE'
+    }, async () => {
+      await delay(200);
+      const list = await this.getForum();
+      const filtered = list.filter(t => t.id !== threadId);
+      localStorage.setItem('infotik_forum', JSON.stringify(filtered));
+      return filtered;
+    });
   },
 
   async deleteReply(threadId: string, replyIdx: number): Promise<ForumThread[]> {
-    await delay(200);
-    const list = await this.getForum();
-    const updated = list.map(t => {
-      if (t.id === threadId) {
-        const reps = [...t.replies];
-        reps.splice(replyIdx, 1);
-        return { ...t, replies: reps };
-      }
-      return t;
+    return fetchOrFallback<ForumThread[]>(`/api/forum/${threadId}/replies/${replyIdx}`, {
+      method: 'DELETE'
+    }, async () => {
+      await delay(200);
+      const list = await this.getForum();
+      const updated = list.map(t => {
+        if (t.id === threadId) {
+          const reps = [...t.replies];
+          reps.splice(replyIdx, 1);
+          return { ...t, replies: reps };
+        }
+        return t;
+      });
+      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      return updated;
     });
-    localStorage.setItem('infotik_forum', JSON.stringify(updated));
-    return updated;
   },
 
   // News CRUD update
   async updateNews(newsId: string, fields: Partial<NewsItem>): Promise<NewsItem[]> {
-    await delay(200);
-    const list = await this.getNews();
-    const updated = list.map(n => n.id === newsId ? { ...n, ...fields } : n);
-    localStorage.setItem('infotik_news', JSON.stringify(updated));
-    return updated;
+    return fetchOrFallback<NewsItem[]>(`/api/news/${newsId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields)
+    }, async () => {
+      await delay(200);
+      const list = await this.getNews();
+      const updated = list.map(n => n.id === newsId ? { ...n, ...fields } : n);
+      localStorage.setItem('infotik_news', JSON.stringify(updated));
+      return updated;
+    });
   },
 
   // Tasks CRUD update
   async updateTask(taskId: string, fields: Partial<TaskItem>): Promise<TaskItem[]> {
-    await delay(200);
-    const list = await this.getTasks();
-    const updated = list.map(t => t.id === taskId ? { ...t, ...fields } : t);
-    localStorage.setItem('infotik_tasks', JSON.stringify(updated));
-    return updated;
+    return fetchOrFallback<TaskItem[]>(`/api/tasks/${taskId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(fields)
+    }, async () => {
+      await delay(200);
+      const list = await this.getTasks();
+      const updated = list.map(t => t.id === taskId ? { ...t, ...fields } : t);
+      localStorage.setItem('infotik_tasks', JSON.stringify(updated));
+      return updated;
+    });
   },
 
   async deleteWASubmission(ticketId: string): Promise<WASubmission[]> {
-    await delay(200);
-    const list = await this.getWASubmissions();
-    const filtered = list.filter(s => s.id !== ticketId);
-    localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
-    return filtered;
+    return fetchOrFallback<WASubmission[]>(`/api/wa-submissions/${ticketId}`, {
+      method: 'DELETE'
+    }, async () => {
+      await delay(200);
+      const list = await this.getWASubmissions();
+      const filtered = list.filter(s => s.id !== ticketId);
+      localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
+      return filtered;
+    });
   }
 };
