@@ -1,0 +1,16 @@
+node_modules/
+.venv/
+venv/
+dist/
+build/
+out/
+dist-electron/
+coverage/
+.vite/
+.next/
+.turbo/
+.cache/
+graphify-out/
+graphify-obsidian/
+.DS_Store
+*.log

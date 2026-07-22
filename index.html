@@ -1,0 +1,1302 @@
+<!DOCTYPE html>
+<html lang="id" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>INFOTIK 26 - Pusat Informasi Mahasiswa Teknik Informatika 2026 UMKT</title>
+  <meta name="description" content="One-stop Information Hub resmi Mahasiswa Baru Teknik Informatika Angkatan 2026 Universitas Muhammadiyah Kalimantan Timur.">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81'
+            },
+            accent: {
+              gold: '#f59e0b',
+              emerald: '#10b981',
+              rose: '#f43f5e'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/styles.css">
+
+  <!-- Alpine.js Components & App Logic -->
+  <script src="js/data.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/calendar.js"></script>
+  <script src="js/app.js"></script>
+  <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+</head>
+<body x-data="infotikApp" class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div x-cloak x-show="toast.show" x-transition:enter="transition ease-out duration-300 transform" x-transition:enter-start="opacity-0 translate-y-2 scale-95" x-transition:enter-end="opacity-100 translate-y-0 scale-100" x-transition:leave="transition ease-in duration-200 transform" x-transition:leave-start="opacity-100 translate-y-0 scale-100" x-transition:leave-end="opacity-0 translate-y-2 scale-95" class="fixed top-5 right-5 z-50 max-w-sm w-full shadow-2xl rounded-xl glass-card p-4 border flex items-start space-x-3" :class="{
+    'border-emerald-500/50 text-emerald-900 dark:text-emerald-200': toast.type === 'success',
+    'border-indigo-500/50 text-indigo-900 dark:text-indigo-200': toast.type === 'info',
+    'border-amber-500/50 text-amber-900 dark:text-amber-200': toast.type === 'warning',
+    'border-rose-500/50 text-rose-900 dark:text-rose-200': toast.type === 'danger'
+  }">
+    <div class="p-2 rounded-lg bg-indigo-500/10 shrink-0">
+      <i data-lucide="bell" class="w-5 h-5 text-indigo-500"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <h4 class="font-bold text-sm" x-text="toast.title"></h4>
+      <p class="text-xs opacity-90 mt-0.5 leading-relaxed" x-text="toast.message"></p>
+    </div>
+    <button @click="toast.show = false" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1">
+      <i data-lucide="x" class="w-4 h-4"></i>
+    </button>
+  </div>
+
+  <div class="flex flex-1">
+    
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="hidden lg:flex flex-col w-72 border-r border-slate-200 dark:border-slate-800 bg-white/70 dark:bg-slate-900/70 backdrop-blur-xl sticky top-0 h-screen z-30 p-5">
+      <!-- Logo & Title -->
+      <div class="flex items-center space-x-3 pb-6 border-b border-slate-200 dark:border-slate-800">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-500 to-purple-500 flex items-center justify-center text-white shadow-lg glow-purple font-extrabold text-xl">
+          TI
+        </div>
+        <div>
+          <h1 class="font-extrabold text-lg tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-600 via-purple-600 to-indigo-400">
+            INFOTIK 26
+          </h1>
+          <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300">
+            FST UMKT 2026
+          </span>
+        </div>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="flex-1 my-6 space-y-1.5 overflow-y-auto no-scrollbar pr-1">
+        <button @click="setTab('dashboard')" :class="currentTab === 'dashboard' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+          <span>Dashboard</span>
+        </button>
+
+        <button @click="setTab('jadwal')" :class="currentTab === 'jadwal' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="calendar" class="w-5 h-5"></i>
+          <span>Jadwal Kuliah</span>
+        </button>
+
+        <button @click="setTab('masta')" :class="currentTab === 'masta' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="compass" class="w-5 h-5"></i>
+          <span>Panduan Masta</span>
+        </button>
+
+        <button @click="setTab('btq')" :class="currentTab === 'btq' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="book-open" class="w-5 h-5"></i>
+          <span>Ujian BTQ</span>
+        </button>
+
+        <button @click="setTab('tips')" :class="currentTab === 'tips' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="sparkles" class="w-5 h-5"></i>
+          <span>Tips Akademik</span>
+        </button>
+
+        <button @click="setTab('tugas')" :class="currentTab === 'tugas' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="check-square" class="w-5 h-5"></i>
+          <span>Daftar Tugas</span>
+        </button>
+
+        <button @click="setTab('forum')" :class="currentTab === 'forum' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="messages-square" class="w-5 h-5"></i>
+          <span>Forum Diskusi</span>
+        </button>
+
+        <button @click="setTab('buletin')" :class="currentTab === 'buletin' ? 'bg-brand-600 text-white shadow-md shadow-brand-500/20' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60 hover:text-slate-900 dark:hover:text-white'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl font-medium text-sm transition-all duration-200">
+          <i data-lucide="newspaper" class="w-5 h-5"></i>
+          <span>Buletin Info</span>
+        </button>
+
+        <div class="pt-4 pb-2">
+          <p class="px-3 text-[11px] font-bold tracking-wider text-slate-400 uppercase">Khusus Angkatan</p>
+        </div>
+
+        <button @click="setTab('wagroup')" :class="currentTab === 'wagroup' ? 'bg-emerald-600 text-white shadow-md shadow-emerald-500/20' : 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40 font-semibold'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm transition-all duration-200">
+          <i data-lucide="message-circle" class="w-5 h-5"></i>
+          <span>Gabung Grup WA</span>
+        </button>
+
+        <button @click="setTab('admin')" :class="currentTab === 'admin' ? 'bg-purple-600 text-white shadow-md shadow-purple-500/20' : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'" class="w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 mt-2">
+          <i data-lucide="shield-check" class="w-5 h-5"></i>
+          <span>Panel Admin</span>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer -->
+      <div class="pt-4 border-t border-slate-200 dark:border-slate-800 text-xs text-slate-400">
+        <p class="font-medium text-slate-600 dark:text-slate-300">Pusat Informasi TI 2026</p>
+        <p class="mt-0.5 text-[11px]">Dikelola oleh Panitia Angkatan '26</p>
+      </div>
+    </aside>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 min-w-0 flex flex-col pb-24 lg:pb-10">
+      
+      <!-- TOP HEADER BAR -->
+      <header class="sticky top-0 z-20 border-b border-slate-200 dark:border-slate-800 glass-nav px-4 lg:px-8 py-3.5 flex items-center justify-between">
+        <!-- Mobile Logo -->
+        <div class="flex items-center space-x-2 lg:hidden">
+          <div class="w-9 h-9 rounded-lg bg-gradient-to-tr from-brand-600 to-purple-600 flex items-center justify-center text-white font-bold text-base shadow">
+            TI
+          </div>
+          <span class="font-extrabold text-base tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-brand-600 to-purple-500">
+            INFOTIK 26
+          </span>
+        </div>
+
+        <!-- Global Search Bar -->
+        <div class="hidden sm:flex items-center max-w-md w-full relative">
+          <i data-lucide="search" class="w-4 h-4 absolute left-3.5 text-slate-400"></i>
+          <input type="text" x-model="searchQuery" @input="if(currentTab !== 'buletin') currentTab = 'buletin'" placeholder="Cari pengumuman, matkul, atau info..." class="w-full pl-10 pr-4 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800/80 border border-transparent focus:border-brand-500 focus:bg-white dark:focus:bg-slate-900 focus:outline-none transition-all">
+        </div>
+
+        <!-- Header Actions -->
+        <div class="flex items-center space-x-3">
+          <!-- Live Date Badge -->
+          <div class="hidden md:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-xs text-slate-600 dark:text-slate-300 font-medium">
+            <i data-lucide="clock" class="w-3.5 h-3.5 text-brand-500"></i>
+            <span x-text="new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric' })"></span>
+          </div>
+
+          <!-- Theme Toggle Button -->
+          <button @click="toggleTheme()" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="Beralih Mode Gelap/Terang">
+            <template x-if="darkMode">
+              <i data-lucide="sun" class="w-4 h-4 text-amber-400"></i>
+            </template>
+            <template x-if="!darkMode">
+              <i data-lucide="moon" class="w-4 h-4 text-slate-700"></i>
+            </template>
+          </button>
+
+          <!-- User Profile / WA Status Chip -->
+          <button @click="setTab('wagroup')" class="flex items-center space-x-2 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-800 hover:border-emerald-500/50 transition">
+            <div class="w-2.5 h-2.5 rounded-full" :class="waSubmission ? (waSubmission.status === 'Approved' ? 'bg-emerald-500' : (waSubmission.status === 'Rejected' ? 'bg-rose-500' : 'bg-amber-500 animate-pulse')) : 'bg-slate-400'"></div>
+            <span class="text-xs font-semibold" x-text="waSubmission ? (waSubmission.status === 'Approved' ? 'Terverifikasi' : 'Status WA: ' + waSubmission.status) : 'Verifikasi WA'"></span>
+          </button>
+        </div>
+      </header>
+
+      <!-- TAB CONTENT PAGES -->
+      <div class="px-4 lg:px-8 py-6 max-w-7xl w-full mx-auto space-y-8">
+        
+        <!-- PAGE 1: HOME / DASHBOARD -->
+        <div x-show="currentTab === 'dashboard'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <!-- Hero Welcome Banner -->
+          <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-brand-900 via-indigo-900 to-purple-950 text-white p-6 sm:p-8 shadow-2xl border border-indigo-500/20">
+            <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
+            <div class="relative z-10 max-w-2xl space-y-3">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                🚀 Welcome Maba Teknik Informatika 2026!
+              </span>
+              <h2 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+                Pusat Informasi Resmi Angkatan 2026 UMKT
+              </h2>
+              <p class="text-xs sm:text-sm text-indigo-200/90 leading-relaxed">
+                Platform <span class="font-semibold text-white">One-Stop Hub</span> yang dirancang khusus untuk mempermudah informasi akademik, jadwal kuliah, orientasi Masta, ujian BTQ, dan diskusi tanpa perlu ragu berulang kali di WhatsApp.
+              </p>
+              <div class="pt-3 flex flex-wrap gap-3">
+                <button @click="setTab('jadwal')" class="px-4 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-white text-xs font-bold shadow-lg shadow-brand-500/30 flex items-center space-x-2 transition">
+                  <i data-lucide="calendar" class="w-4 h-4"></i>
+                  <span>Lihat Jadwal Kuliah</span>
+                </button>
+                <button @click="setTab('wagroup')" class="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-lg shadow-emerald-600/30 flex items-center space-x-2 transition">
+                  <i data-lucide="message-circle" class="w-4 h-4"></i>
+                  <span>Verifikasi Grup WA</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Stats Grid -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="glass-card p-4 rounded-2xl border flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400">
+                <i data-lucide="users" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Total Maba TI</p>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">180+ Maba</h3>
+              </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                <i data-lucide="book-open" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Beban Semester 1</p>
+                <h3 class="text-xl font-extrabold text-slate-900 dark:text-white">20 SKS</h3>
+              </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400">
+                <i data-lucide="compass" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Status Masta</p>
+                <h3 class="text-xl font-extrabold text-emerald-600 dark:text-emerald-400">Agustus 2026</h3>
+              </div>
+            </div>
+
+            <div class="glass-card p-4 rounded-2xl border flex items-center space-x-3">
+              <div class="p-3 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400">
+                <i data-lucide="award" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">Syarat BTQ</p>
+                <h3 class="text-xl font-extrabold text-amber-600 dark:text-amber-400">23 Surah</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Dashboard Cards Grid -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- Left 2 Cols: Pinned Announcements & Quick Actions -->
+            <div class="lg:col-span-2 space-y-6">
+              
+              <!-- Pinned Announcement Card -->
+              <div class="glass-card p-6 rounded-2xl border space-y-4">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-2">
+                    <i data-lucide="pin" class="w-5 h-5 text-brand-500"></i>
+                    <h3 class="font-bold text-base">Pengumuman Penting Angkatan</h3>
+                  </div>
+                  <button @click="setTab('buletin')" class="text-xs text-brand-500 hover:underline font-semibold flex items-center space-x-1">
+                    <span>Semua Berita</span>
+                    <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+
+                <template x-for="news in newsList.filter(n => n.pinned).slice(0, 2)" :key="news.id">
+                  <div class="p-4 rounded-xl bg-indigo-50/50 dark:bg-slate-800/50 border border-indigo-100 dark:border-slate-700/60 space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="px-2.5 py-0.5 rounded-full font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300" x-text="news.category"></span>
+                      <span class="text-slate-400" x-text="news.date"></span>
+                    </div>
+                    <h4 class="font-bold text-sm text-slate-900 dark:text-white" x-text="news.title"></h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="news.summary"></p>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Quick Link Feature Modules -->
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                
+                <div @click="setTab('jadwal')" class="glass-card p-5 rounded-2xl border hover:border-brand-500/50 cursor-pointer transition group">
+                  <div class="flex items-center justify-between">
+                    <div class="p-3 rounded-xl bg-indigo-500/10 text-brand-500 group-hover:scale-110 transition-transform">
+                      <i data-lucide="calendar" class="w-6 h-6"></i>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-brand-500 group-hover:translate-x-1 transition"></i>
+                  </div>
+                  <h4 class="font-bold text-sm mt-4 text-slate-900 dark:text-white">Jadwal Kuliah Sem 1</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Cek ruangan GF-3.02, GF-3.04, & Lab Komputer GF-1.02</p>
+                </div>
+
+                <div @click="setTab('masta')" class="glass-card p-5 rounded-2xl border hover:border-purple-500/50 cursor-pointer transition group">
+                  <div class="flex items-center justify-between">
+                    <div class="p-3 rounded-xl bg-purple-500/10 text-purple-500 group-hover:scale-110 transition-transform">
+                      <i data-lucide="compass" class="w-6 h-6"></i>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-purple-500 group-hover:translate-x-1 transition"></i>
+                  </div>
+                  <h4 class="font-bold text-sm mt-4 text-slate-900 dark:text-white">Panduan Orientasi Masta</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Rincian dresscode, barang bawaan, & alur kegiatan</p>
+                </div>
+
+                <div @click="setTab('btq')" class="glass-card p-5 rounded-2xl border hover:border-amber-500/50 cursor-pointer transition group">
+                  <div class="flex items-center justify-between">
+                    <div class="p-3 rounded-xl bg-amber-500/10 text-amber-500 group-hover:scale-110 transition-transform">
+                      <i data-lucide="book-open" class="w-6 h-6"></i>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-amber-500 group-hover:translate-x-1 transition"></i>
+                  </div>
+                  <h4 class="font-bold text-sm mt-4 text-slate-900 dark:text-white">Panduan Ujian BTQ</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Syarat wajib kelulusan & 23 surah hafalan Juz 30</p>
+                </div>
+
+                <div @click="setTab('tugas')" class="glass-card p-5 rounded-2xl border hover:border-emerald-500/50 cursor-pointer transition group">
+                  <div class="flex items-center justify-between">
+                    <div class="p-3 rounded-xl bg-emerald-500/10 text-emerald-500 group-hover:scale-110 transition-transform">
+                      <i data-lucide="check-square" class="w-6 h-6"></i>
+                    </div>
+                    <i data-lucide="arrow-right" class="w-4 h-4 text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition"></i>
+                  </div>
+                  <h4 class="font-bold text-sm mt-4 text-slate-900 dark:text-white">Daftar Tugas Maba</h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pantau deadline tugas koding & praktikum</p>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Right Col: Verification Status & Upcoming Tasks Summary -->
+            <div class="space-y-6">
+              
+              <!-- WA Group Join Banner -->
+              <div class="glass-card p-6 rounded-2xl border border-emerald-500/30 bg-gradient-to-br from-emerald-500/5 to-teal-500/5 space-y-4">
+                <div class="flex items-center space-x-3">
+                  <div class="p-3 rounded-xl bg-emerald-500 text-white shadow-md shadow-emerald-500/20">
+                    <i data-lucide="message-circle" class="w-6 h-6"></i>
+                  </div>
+                  <div>
+                    <h3 class="font-bold text-base text-slate-900 dark:text-white">Grup WA Resmi 2026</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Verifikasi SIM-PMB PDF untuk bergabung</p>
+                  </div>
+                </div>
+
+                <template x-if="!waSubmission">
+                  <div class="space-y-3 pt-2">
+                    <p class="text-xs text-slate-600 dark:text-slate-300">
+                      Grup WA resmi diproteksi dengan verifikasi Surat Lolos Seleksi agar bebas dari akun bot/penipuan.
+                    </p>
+                    <button @click="setTab('wagroup')" class="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/30 transition">
+                      Form Verifikasi Sekarang
+                    </button>
+                  </div>
+                </template>
+
+                <template x-if="waSubmission">
+                  <div class="p-4 rounded-xl bg-white/80 dark:bg-slate-800/80 border space-y-2">
+                    <div class="flex items-center justify-between text-xs">
+                      <span class="font-semibold text-slate-500">Tiket: <span x-text="waSubmission.id"></span></span>
+                      <span class="px-2 py-0.5 rounded-full font-bold text-[10px]" :class="{
+                        'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300': waSubmission.status === 'Pending',
+                        'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300': waSubmission.status === 'Approved',
+                        'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300': waSubmission.status === 'Rejected'
+                      }" x-text="waSubmission.status"></span>
+                    </div>
+                    <p class="text-xs font-medium text-slate-700 dark:text-slate-200" x-text="'Nama: ' + waSubmission.name"></p>
+                    
+                    <template x-if="waSubmission.status === 'Approved'">
+                      <a :href="waSubmission.waLink" target="_blank" class="block text-center w-full py-2 mt-2 rounded-xl bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition shadow">
+                        Masuk Grup WhatsApp Official 🚀
+                      </a>
+                    </template>
+                  </div>
+                </template>
+              </div>
+
+              <!-- Active Tasks Widget -->
+              <div class="glass-card p-6 rounded-2xl border space-y-4">
+                <div class="flex items-center justify-between">
+                  <h3 class="font-bold text-sm flex items-center space-x-2">
+                    <i data-lucide="clock" class="w-4 h-4 text-indigo-500"></i>
+                    <span>Tugas Mendatang</span>
+                  </h3>
+                  <button @click="setTab('tugas')" class="text-xs text-brand-500 hover:underline font-semibold">Kelola</button>
+                </div>
+
+                <div class="space-y-2.5">
+                  <template x-for="task in tasks.filter(t => t.status !== 'Selesai').slice(0, 3)" :key="task.id">
+                    <div class="p-3 rounded-xl bg-slate-100/70 dark:bg-slate-800/60 border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-between">
+                      <div class="min-w-0 pr-2">
+                        <h5 class="font-bold text-xs truncate text-slate-900 dark:text-white" x-text="task.title"></h5>
+                        <p class="text-[11px] text-slate-500 dark:text-slate-400" x-text="task.course + ' • ' + task.deadline"></p>
+                      </div>
+                      <span class="px-2 py-0.5 rounded text-[10px] font-bold shrink-0" :class="{
+                        'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300': task.priority === 'Tinggi' || task.priority === 'Sangat Tinggi',
+                        'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300': task.priority === 'Sedang',
+                        'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300': task.priority === 'Rendah'
+                      }" x-text="task.priority"></span>
+                    </div>
+                  </template>
+
+                  <template x-if="tasks.filter(t => t.status !== 'Selesai').length === 0">
+                    <p class="text-xs text-slate-400 italic text-center py-4">Belum ada tugas yang aktif saat ini. 🎉</p>
+                  </template>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- PAGE 2: JADWAL KULIAH SEMESTER 1 -->
+        <div x-show="currentTab === 'jadwal'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold tracking-tight">Jadwal Kuliah Semester 1 (2026/2027)</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Daftar presensi matkul, ruangan kelas GF-3.02, GF-3.04, & Lab Komputer GF-1.02 UMKT.</p>
+            </div>
+
+            <!-- Day Filter Tabs -->
+            <div class="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl overflow-x-auto no-scrollbar">
+              <template x-for="day in ['Semua', 'Senin', 'Selasa', 'Rabu', 'Sabtu']" :key="day">
+                <button @click="selectedDay = day" :class="selectedDay === day ? 'bg-brand-600 text-white font-bold shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'" class="px-3.5 py-1.5 rounded-lg text-xs transition">
+                  <span x-text="day"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- Schedule Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <template x-for="item in filteredSchedules" :key="item.id">
+              <div class="glass-card rounded-2xl border overflow-hidden flex flex-col justify-between hover:border-brand-500/50 transition duration-200 group">
+                <div>
+                  <!-- Card Header Ribbon -->
+                  <div class="px-5 py-3 text-white flex items-center justify-between" :class="'bg-gradient-to-r ' + item.color">
+                    <span class="font-extrabold text-xs tracking-wider uppercase" x-text="item.day"></span>
+                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/20 backdrop-blur-md" x-text="item.badge"></span>
+                  </div>
+
+                  <!-- Card Body -->
+                  <div class="p-5 space-y-3">
+                    <div>
+                      <h4 class="font-extrabold text-base text-slate-900 dark:text-white leading-snug group-hover:text-brand-500 transition" x-text="item.course"></h4>
+                      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1 font-medium" x-text="item.lecturer"></p>
+                    </div>
+
+                    <div class="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                      <div class="flex items-center text-slate-600 dark:text-slate-300">
+                        <i data-lucide="clock" class="w-4 h-4 text-brand-500 mr-2 shrink-0"></i>
+                        <span class="font-semibold" x-text="item.time"></span>
+                      </div>
+                      <div class="flex items-center text-slate-600 dark:text-slate-300">
+                        <i data-lucide="map-pin" class="w-4 h-4 text-rose-500 mr-2 shrink-0"></i>
+                        <span>Ruang <strong class="font-bold text-slate-900 dark:text-white" x-text="item.room"></strong> (<span x-text="item.building"></span>)</span>
+                      </div>
+                      <div class="flex items-center text-slate-600 dark:text-slate-300">
+                        <i data-lucide="award" class="w-4 h-4 text-amber-500 mr-2 shrink-0"></i>
+                        <span>Beban Bobot: <strong class="font-bold text-slate-900 dark:text-white" x-text="item.sks + ' SKS'"></strong></span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Export Calendar Actions -->
+                <div class="p-4 bg-slate-50/80 dark:bg-slate-900/60 border-t border-slate-100 dark:border-slate-800 flex items-center space-x-2">
+                  <button @click="openGoogleCalendar(item)" class="flex-1 py-2 px-3 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900/60 text-brand-600 dark:text-brand-300 font-bold text-xs flex items-center justify-center space-x-1.5 transition">
+                    <i data-lucide="calendar-plus" class="w-3.5 h-3.5"></i>
+                    <span>Google Cal</span>
+                  </button>
+                  <button @click="downloadIcs(item)" class="py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs flex items-center justify-center transition" title="Download file .ics untuk Apple/Outlook/Google">
+                    <i data-lucide="download" class="w-3.5 h-3.5"></i>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+
+        </div>
+
+        <!-- PAGE 3: PANDUAN MASTA (ORIENTASI) -->
+        <div x-show="currentTab === 'masta'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Panduan Masa Ta'aruf (MASTA 2026)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Panduan lengkap kegiatan orientasi mahasiswa baru Teknik Informatika UMKT.</p>
+          </div>
+
+          <!-- Prominent Disclaimer Box -->
+          <div class="p-5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 space-y-2 flex items-start space-x-3">
+            <i data-lucide="alert-triangle" class="w-6 h-6 text-amber-500 shrink-0 mt-0.5"></i>
+            <div>
+              <h4 class="font-bold text-sm">PENTING - Disclaimer Informasi Masta</h4>
+              <p class="text-xs leading-relaxed opacity-90" x-text="mastaData.disclaimer"></p>
+            </div>
+          </div>
+
+          <!-- Masta Timeline Stages -->
+          <div class="glass-card p-6 sm:p-8 rounded-3xl border space-y-6">
+            <h3 class="font-bold text-lg flex items-center space-x-2">
+              <i data-lucide="milestone" class="w-5 h-5 text-brand-500"></i>
+              <span>Alur & Tahapan Kegiatan Masta</span>
+            </h3>
+
+            <div class="relative border-l-2 border-brand-500/30 ml-4 space-y-8 pl-6 sm:pl-8">
+              <template x-for="(stage, idx) in mastaData.stages" :key="idx">
+                <div class="relative group">
+                  <div class="absolute -left-[31px] sm:-left-[39px] top-1 w-6 h-6 rounded-full bg-brand-500 text-white flex items-center justify-center text-xs font-bold shadow-lg shadow-brand-500/30">
+                    <span x-text="idx + 1"></span>
+                  </div>
+                  <div class="space-y-2">
+                    <div class="flex flex-wrap items-center gap-2">
+                      <h4 class="font-extrabold text-base text-slate-900 dark:text-white" x-text="stage.title"></h4>
+                      <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300" x-text="stage.duration"></span>
+                    </div>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="stage.description"></p>
+                    <div class="flex flex-wrap gap-2 pt-1">
+                      <template x-for="hl in stage.highlights" :key="hl">
+                        <span class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-[11px] font-medium text-slate-600 dark:text-slate-300 flex items-center space-x-1">
+                          <i data-lucide="check-circle" class="w-3 h-3 text-emerald-500 mr-1"></i>
+                          <span x-text="hl"></span>
+                        </span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <!-- Dresscode & Equipment Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Dresscode Section -->
+            <div class="glass-card p-6 rounded-3xl border space-y-4">
+              <h3 class="font-bold text-base flex items-center space-x-2 text-slate-900 dark:text-white">
+                <i data-lucide="shirt" class="w-5 h-5 text-purple-500"></i>
+                <span>Ketentuan Dresscode Pakaian</span>
+              </h3>
+
+              <div class="space-y-4">
+                <template x-for="dc in mastaData.dressCode" :key="dc.type">
+                  <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 space-y-2">
+                    <h4 class="font-bold text-xs uppercase tracking-wider text-brand-500" x-text="'Peserta ' + dc.type"></h4>
+                    <ul class="space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+                      <template x-for="item in dc.items" :key="item">
+                        <li class="flex items-start space-x-2">
+                          <i data-lucide="chevron-right" class="w-3.5 h-3.5 text-purple-500 shrink-0 mt-0.5"></i>
+                          <span x-text="item"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Equipments & Rules -->
+            <div class="glass-card p-6 rounded-3xl border space-y-6">
+              <div>
+                <h3 class="font-bold text-base flex items-center space-x-2 text-slate-900 dark:text-white mb-3">
+                  <i data-lucide="briefcase" class="w-5 h-5 text-emerald-500"></i>
+                  <span>Barang Bawaan Wajib</span>
+                </h3>
+                <ul class="space-y-2 text-xs text-slate-600 dark:text-slate-300">
+                  <template x-for="eq in mastaData.equipments" :key="eq">
+                    <li class="flex items-center space-x-2 p-2 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+                      <i data-lucide="check" class="w-4 h-4 text-emerald-500 shrink-0"></i>
+                      <span x-text="eq"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+
+              <!-- Do's and Dont's -->
+              <div class="pt-4 border-t border-slate-100 dark:border-slate-800 grid grid-cols-2 gap-3 text-xs">
+                <div>
+                  <h4 class="font-bold text-emerald-600 dark:text-emerald-400 mb-2">DO'S (Wajib)</h4>
+                  <ul class="space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+                    <template x-for="d in mastaData.dosAndDonts.dos" :key="d">
+                      <li class="flex items-start space-x-1">
+                        <span class="text-emerald-500">✓</span>
+                        <span x-text="d"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-bold text-rose-600 dark:text-rose-400 mb-2">DON'TS (Dilarang)</h4>
+                  <ul class="space-y-1 text-[11px] text-slate-600 dark:text-slate-400">
+                    <template x-for="d in mastaData.dosAndDonts.donts" :key="d">
+                      <li class="flex items-start space-x-1">
+                        <span class="text-rose-500">✕</span>
+                        <span x-text="d"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- PAGE 4: UJIAN BTQ (BACA TULIS AL-QUR'AN) -->
+        <div x-show="currentTab === 'btq'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Panduan Standar & Ujian BTQ</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Syarat wajib kelulusan Baca Tulis Al-Qur'an Lembaga Al-Islam & Kemuhammadiyahan UMKT.</p>
+          </div>
+
+          <!-- Alert Box -->
+          <div class="p-6 rounded-3xl bg-gradient-to-r from-rose-500/10 via-amber-500/10 to-emerald-500/10 border border-rose-500/30 text-slate-900 dark:text-white space-y-3 shadow-lg">
+            <div class="flex items-center space-x-3">
+              <div class="p-2.5 rounded-xl bg-rose-500 text-white font-bold">
+                <i data-lucide="shield-alert" class="w-6 h-6"></i>
+              </div>
+              <h3 class="font-extrabold text-base">SYARAT MUTLAK KELULUSAN SKRIPSI / TA</h3>
+            </div>
+            <p class="text-xs sm:text-sm leading-relaxed text-slate-700 dark:text-slate-200" x-text="btqData.alertMessage"></p>
+          </div>
+
+          <!-- Requirements & Consequences Grid -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Requirements -->
+            <div class="glass-card p-6 rounded-3xl border space-y-4">
+              <h3 class="font-bold text-base flex items-center space-x-2 text-slate-900 dark:text-white">
+                <i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>
+                <span>Syarat Kelulusan BTQ</span>
+              </h3>
+              <ul class="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+                <template x-for="req in btqData.passingCriteria" :key="req">
+                  <li class="flex items-start space-x-2.5 p-3 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800">
+                    <i data-lucide="check-square" class="w-4 h-4 text-emerald-500 shrink-0 mt-0.5"></i>
+                    <span class="font-medium" x-text="req"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+
+            <!-- Consequences -->
+            <div class="glass-card p-6 rounded-3xl border space-y-4">
+              <h3 class="font-bold text-base flex items-center space-x-2 text-rose-600 dark:text-rose-400">
+                <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                <span>Konsekuensi Jika Belum Lulus</span>
+              </h3>
+              <ul class="space-y-2.5 text-xs text-slate-600 dark:text-slate-300">
+                <template x-for="csq in btqData.consequences" :key="csq">
+                  <li class="flex items-start space-x-2.5 p-3 rounded-xl bg-rose-50/50 dark:bg-rose-950/30 border border-rose-100 dark:border-rose-900/50">
+                    <i data-lucide="x-circle" class="w-4 h-4 text-rose-500 shrink-0 mt-0.5"></i>
+                    <span class="font-medium" x-text="csq"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+
+          </div>
+
+          <!-- Surahs Checklist & Tips Grade A -->
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
+            <!-- 23 Surah List -->
+            <div class="glass-card p-6 rounded-3xl border space-y-4 lg:col-span-1">
+              <h3 class="font-bold text-base flex items-center space-x-2 text-slate-900 dark:text-white">
+                <i data-lucide="book-marked" class="w-5 h-5 text-amber-500"></i>
+                <span>Daftar 23 Surah Pendek (Juz 30)</span>
+              </h3>
+              <div class="max-h-96 overflow-y-auto no-scrollbar space-y-1.5 pr-1">
+                <template x-for="(surah, i) in btqData.surahList" :key="surah">
+                  <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 text-xs">
+                    <span class="font-semibold text-slate-700 dark:text-slate-200" x-text="(i+1) + '. Q.S. ' + surah"></span>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300">Wajib</span>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <!-- Tips for Grade A -->
+            <div class="glass-card p-6 rounded-3xl border space-y-4 lg:col-span-2">
+              <h3 class="font-bold text-base flex items-center space-x-2 text-slate-900 dark:text-white">
+                <i data-lucide="award" class="w-5 h-5 text-brand-500"></i>
+                <span>Tips Trik Mendapatkan Nilai A pada Ujian BTQ</span>
+              </h3>
+              
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <template x-for="tip in btqData.tipsForGradeA" :key="tip.title">
+                  <div class="p-4 rounded-2xl bg-indigo-50/50 dark:bg-slate-900/60 border border-indigo-100 dark:border-slate-800 space-y-2">
+                    <h4 class="font-bold text-xs text-brand-600 dark:text-brand-400" x-text="tip.title"></h4>
+                    <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="tip.desc"></p>
+                  </div>
+                </template>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- PAGE 5: TIPS AKADEMIK & SOSIAL -->
+        <div x-show="currentTab === 'tips'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Tips Survive Maba (Akademik & Sosial)</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Panduan kasual & relatable untuk sukses kuliah di Teknik Informatika UMKT.</p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <template x-for="tip in tipsData" :key="tip.id">
+              <div class="glass-card p-6 rounded-3xl border flex flex-col justify-between hover:border-brand-500/50 transition group">
+                <div class="space-y-4">
+                  <div class="flex items-center justify-between">
+                    <span class="px-3 py-1 rounded-full text-xs font-bold" :class="tip.tagColor" x-text="tip.category"></span>
+                    <i data-lucide="sparkles" class="w-5 h-5 text-amber-400 group-hover:scale-125 transition-transform"></i>
+                  </div>
+                  <h3 class="font-extrabold text-base text-slate-900 dark:text-white leading-snug" x-text="tip.title"></h3>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="tip.content"></p>
+                </div>
+              </div>
+            </template>
+          </div>
+
+        </div>
+
+        <!-- PAGE 6: DAFTAR TUGAS (TASK MANAGER) -->
+        <div x-show="currentTab === 'tugas'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold tracking-tight">Daftar Tugas Perkuliahan (Task List)</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pantau tugas kuliah resmi yang di-input admin maupun catatan tugas pribadi kamu.</p>
+            </div>
+
+            <!-- Task Status Filters -->
+            <div class="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl overflow-x-auto no-scrollbar">
+              <template x-for="f in ['Semua', 'Belum Dikerjakan', 'Dalam Proses', 'Selesai']" :key="f">
+                <button @click="taskFilter = f" :class="taskFilter === f ? 'bg-brand-600 text-white font-bold shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs transition whitespace-nowrap">
+                  <span x-text="f"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- Add Task Form Modal / Expansion -->
+          <div class="glass-card p-6 rounded-3xl border space-y-4">
+            <h3 class="font-bold text-sm flex items-center space-x-2">
+              <i data-lucide="plus-circle" class="w-4 h-4 text-brand-500"></i>
+              <span>Tambah Catatan Tugas Mandiri</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input type="text" x-model="newTaskForm.title" placeholder="Nama tugas (contoh: Latihan Loops C++)" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none">
+              
+              <select x-model="newTaskForm.course" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none">
+                <option value="Dasar Pemrograman">Dasar Pemrograman</option>
+                <option value="Sistem Digital">Sistem Digital & Arskom</option>
+                <option value="Aljabar Linear">Aljabar Linear</option>
+                <option value="Matematika Diskrit">Matematika Diskrit</option>
+                <option value="Aplikasi Komputer">Aplikasi Komputer</option>
+                <option value="Ujian BTQ / LAK">Ujian BTQ / LAK</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+
+              <input type="date" x-model="newTaskForm.deadline" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none">
+            </div>
+
+            <div class="flex items-center space-x-3 pt-1">
+              <button @click="createTask()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition">
+                Simpan Tugas
+              </button>
+            </div>
+          </div>
+
+          <!-- Tasks List Display -->
+          <div class="space-y-3">
+            <template x-for="t in filteredTasks" :key="t.id">
+              <div class="glass-card p-4 sm:p-5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4 transition hover:border-brand-500/40">
+                <div class="space-y-1 flex-1">
+                  <div class="flex items-center space-x-2">
+                    <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/50 dark:text-brand-300" x-text="t.course"></span>
+                    <span class="px-2 py-0.5 rounded text-[10px] font-bold" :class="{
+                      'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300': t.priority === 'Tinggi' || t.priority === 'Sangat Tinggi',
+                      'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300': t.priority === 'Sedang',
+                      'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300': t.priority === 'Rendah'
+                    }" x-text="'Prioritas: ' + t.priority"></span>
+                  </div>
+                  <h4 class="font-bold text-sm text-slate-900 dark:text-white" :class="t.status === 'Selesai' ? 'line-through opacity-60' : ''" x-text="t.title"></h4>
+                  <p class="text-xs text-slate-500 dark:text-slate-400" x-text="t.description || 'Deadline: ' + t.deadline"></p>
+                </div>
+
+                <div class="flex items-center space-x-2 shrink-0">
+                  <select :value="t.status" @change="updateTaskStatus(t.id, $event.target.value)" class="px-3 py-1.5 text-xs font-bold rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                    <option value="Belum Dikerjakan">Belum Dikerjakan ⏳</option>
+                    <option value="Dalam Proses">Dalam Proses 🚀</option>
+                    <option value="Selesai">Selesai ✅</option>
+                  </select>
+
+                  <button @click="deleteTask(t.id)" class="p-2 rounded-xl text-slate-400 hover:text-rose-500 transition" title="Hapus Tugas">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+
+        </div>
+
+        <!-- PAGE 7: FORUM DISKUSI -->
+        <div x-show="currentTab === 'forum'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold tracking-tight">Forum Diskusi Mahasiswa TI '26</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Wadah bertanya, berdiskusi koding, info kost, dan topik perkuliahan sesama maba.</p>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl overflow-x-auto no-scrollbar">
+              <template x-for="cat in ['Semua', 'Umum & Peralatan', 'Info Kost', 'Tugas & Coding', 'Masta 2026']" :key="cat">
+                <button @click="forumCategoryFilter = cat" :class="forumCategoryFilter === cat ? 'bg-brand-600 text-white font-bold shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs transition whitespace-nowrap">
+                  <span x-text="cat"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- New Thread Creation Form -->
+          <div class="glass-card p-6 rounded-3xl border space-y-4">
+            <h3 class="font-bold text-sm flex items-center space-x-2">
+              <i data-lucide="message-square-plus" class="w-4 h-4 text-brand-500"></i>
+              <span>Buat Diskusi / Pertanyaan Baru</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <input type="text" x-model="newThreadForm.author" placeholder="Nama Kamu" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none">
+              <input type="text" x-model="newThreadForm.title" placeholder="Judul pertanyaan / topik" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none sm:col-span-2">
+            </div>
+
+            <textarea x-model="newThreadForm.content" rows="2" placeholder="Tuliskan pertanyaan atau informasi selengkapnya..." class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none"></textarea>
+
+            <div class="flex items-center justify-between pt-1">
+              <select x-model="newThreadForm.category" class="px-3 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none">
+                <option value="Umum & Peralatan">Umum & Peralatan</option>
+                <option value="Info Kost">Info Kost</option>
+                <option value="Tugas & Coding">Tugas & Coding</option>
+                <option value="Masta 2026">Masta 2026</option>
+              </select>
+
+              <button @click="createThread()" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs shadow-md transition">
+                Terbitkan Thread
+              </button>
+            </div>
+          </div>
+
+          <!-- Forum Threads List -->
+          <div class="space-y-4">
+            <template x-for="item in filteredForum" :key="item.id">
+              <div class="glass-card p-6 rounded-3xl border space-y-4">
+                
+                <!-- Author Header -->
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center space-x-3">
+                    <img :src="item.avatar" class="w-9 h-9 rounded-full bg-slate-200 dark:bg-slate-800 p-0.5 border">
+                    <div>
+                      <h4 class="font-bold text-xs text-slate-900 dark:text-white" x-text="item.author"></h4>
+                      <p class="text-[11px] text-slate-400" x-text="item.date"></p>
+                    </div>
+                  </div>
+                  <span class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-indigo-100 text-indigo-700 dark:bg-indigo-900/60 dark:text-indigo-300" x-text="item.category"></span>
+                </div>
+
+                <!-- Content -->
+                <div class="space-y-2">
+                  <h3 class="font-extrabold text-base text-slate-900 dark:text-white" x-text="item.title"></h3>
+                  <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="item.content"></p>
+                </div>
+
+                <!-- Upvote & Replies Action -->
+                <div class="flex items-center space-x-4 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+                  <button @click="upvoteThread(item.id)" class="flex items-center space-x-1.5 text-slate-500 hover:text-brand-500 font-semibold transition">
+                    <i data-lucide="thumbs-up" class="w-4 h-4"></i>
+                    <span x-text="item.upvotes + ' Upvotes'"></span>
+                  </button>
+                  <span class="text-slate-400">•</span>
+                  <span class="text-slate-500 font-medium" x-text="item.replies.length + ' Balasan'"></span>
+                </div>
+
+                <!-- Thread Replies List -->
+                <template x-if="item.replies.length > 0">
+                  <div class="space-y-2 pt-2">
+                    <template x-for="r in item.replies" :key="r.content">
+                      <div class="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800/80 text-xs space-y-1 ml-4">
+                        <div class="flex items-center justify-between">
+                          <span class="font-bold text-slate-900 dark:text-white text-[11px]" x-text="r.author"></span>
+                          <span class="text-[10px] text-slate-400" x-text="r.date"></span>
+                        </div>
+                        <p class="text-slate-600 dark:text-slate-300" x-text="r.content"></p>
+                      </div>
+                    </template>
+                  </div>
+                </template>
+
+                <!-- Reply Input -->
+                <div class="flex items-center space-x-2 pt-2">
+                  <input type="text" x-model="replyInputs[item.id]" placeholder="Tulis balasan..." class="flex-1 px-3.5 py-1.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-brand-500 focus:outline-none">
+                  <button @click="submitReply(item.id)" class="px-3.5 py-1.5 rounded-xl bg-brand-600 text-white font-bold text-xs hover:bg-brand-700 transition">
+                    Kirim
+                  </button>
+                </div>
+
+              </div>
+            </template>
+          </div>
+
+        </div>
+
+        <!-- PAGE 8: BULETIN INFORMASI -->
+        <div x-show="currentTab === 'buletin'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 class="text-2xl font-extrabold tracking-tight">Buletin Pengumuman Resmi</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pengumuman, berita kampus, dan kabar terbaru seputar mahasiswa Teknik Informatika 2026.</p>
+            </div>
+
+            <div class="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl overflow-x-auto no-scrollbar">
+              <template x-for="cat in ['Semua', 'Pengumuman Resmi', 'Akademik & Masta', 'Laboratorium']" :key="cat">
+                <button @click="newsCategoryFilter = cat" :class="newsCategoryFilter === cat ? 'bg-brand-600 text-white font-bold shadow' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'" class="px-3 py-1.5 rounded-lg text-xs transition whitespace-nowrap">
+                  <span x-text="cat"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+
+          <!-- News List Cards -->
+          <div class="space-y-4">
+            <template x-for="news in filteredNews" :key="news.id">
+              <div class="glass-card p-6 rounded-3xl border space-y-3 hover:border-brand-500/40 transition">
+                <div class="flex items-center justify-between text-xs">
+                  <div class="flex items-center space-x-2">
+                    <span class="px-2.5 py-0.5 rounded-full font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300" x-text="news.category"></span>
+                    <template x-if="news.pinned">
+                      <span class="px-2 py-0.5 rounded-full font-bold bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300 flex items-center space-x-1">
+                        <i data-lucide="pin" class="w-3 h-3"></i>
+                        <span>Disematkan</span>
+                      </span>
+                    </template>
+                  </div>
+                  <span class="text-slate-400" x-text="news.date"></span>
+                </div>
+
+                <h3 class="font-extrabold text-lg text-slate-900 dark:text-white" x-text="news.title"></h3>
+                <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed" x-text="news.content"></p>
+                
+                <div class="pt-2 text-[11px] text-slate-400 font-medium">
+                  Diterbitkan oleh: <span class="text-slate-600 dark:text-slate-300" x-text="news.author"></span>
+                </div>
+              </div>
+            </template>
+          </div>
+
+        </div>
+
+        <!-- PAGE 9: VERIFIKASI GABUNG GRUP WA -->
+        <div x-show="currentTab === 'wagroup'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div class="max-w-2xl mx-auto space-y-6">
+            
+            <div class="text-center space-y-2">
+              <div class="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
+                <i data-lucide="message-circle" class="w-8 h-8"></i>
+              </div>
+              <h2 class="text-2xl font-extrabold tracking-tight">Verifikasi Akses Grup WhatsApp Official</h2>
+              <p class="text-xs text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
+                Untuk mencegah akun palsu/penipuan, setiap Mahasiswa Baru TI 2026 wajib melakukan verifikasi Surat Lolos Seleksi (SIM-PMB UMKT).
+              </p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="glass-card p-6 sm:p-8 rounded-3xl border space-y-6 shadow-xl">
+              
+              <template x-if="!waSubmission">
+                <div class="space-y-5">
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">Nama Lengkap Sesuai SIM-PMB</label>
+                    <input type="text" x-model="waForm.name" placeholder="Contoh: Muhammad Fajar Pratama" class="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-emerald-500 focus:outline-none">
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">NIM / Nomor Pendaftaran SIM-PMB</label>
+                    <input type="text" x-model="waForm.nim" placeholder="Contoh: 261110001" class="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-emerald-500 focus:outline-none">
+                  </div>
+
+                  <div class="space-y-1.5">
+                    <label class="block text-xs font-bold text-slate-700 dark:text-slate-200">Upload Surat Keterangan Lolos Seleksi (PDF)</label>
+                    <div class="border-2 border-dashed border-slate-300 dark:border-slate-700 hover:border-emerald-500 rounded-2xl p-6 text-center space-y-2 cursor-pointer transition relative bg-slate-50/50 dark:bg-slate-900/50">
+                      <input type="file" accept="application/pdf" @change="handleFileUpload($event)" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                      <i data-lucide="file-up" class="w-8 h-8 text-emerald-500 mx-auto"></i>
+                      <p class="text-xs font-semibold text-slate-700 dark:text-slate-200" x-text="waForm.fileName ? waForm.fileName : 'Klik atau seret file Surat Lolos Seleksi (PDF) ke sini'"></p>
+                      <p class="text-[11px] text-slate-400" x-text="waForm.fileSize ? 'Ukuran: ' + waForm.fileSize : 'Ukuran maksimal 5MB (Format PDF)'"></p>
+                    </div>
+                  </div>
+
+                  <button @click="submitWAVerification()" :disabled="waForm.isUploading" class="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 transition disabled:opacity-50">
+                    <template x-if="!waForm.isUploading">
+                      <span>Kirim Data Verifikasi</span>
+                    </template>
+                    <template x-if="waForm.isUploading">
+                      <span>Mengunggah & Memproses...</span>
+                    </template>
+                  </button>
+                </div>
+              </template>
+
+              <!-- Real-time Status Card after submission -->
+              <template x-if="waSubmission">
+                <div class="space-y-6 text-center py-4">
+                  <div class="w-16 h-16 rounded-full flex items-center justify-center mx-auto shadow-lg" :class="{
+                    'bg-amber-500/20 text-amber-500 border border-amber-500/40': waSubmission.status === 'Pending',
+                    'bg-emerald-500/20 text-emerald-500 border border-emerald-500/40': waSubmission.status === 'Approved',
+                    'bg-rose-500/20 text-rose-500 border border-rose-500/40': waSubmission.status === 'Rejected'
+                  }">
+                    <template x-if="waSubmission.status === 'Pending'">
+                      <i data-lucide="clock" class="w-8 h-8 animate-pulse"></i>
+                    </template>
+                    <template x-if="waSubmission.status === 'Approved'">
+                      <i data-lucide="check-circle-2" class="w-8 h-8"></i>
+                    </template>
+                    <template x-if="waSubmission.status === 'Rejected'">
+                      <i data-lucide="x-circle" class="w-8 h-8"></i>
+                    </template>
+                  </div>
+
+                  <div class="space-y-2">
+                    <span class="px-3 py-1 rounded-full text-xs font-extrabold" :class="{
+                      'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300': waSubmission.status === 'Pending',
+                      'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300': waSubmission.status === 'Approved',
+                      'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300': waSubmission.status === 'Rejected'
+                    }" x-text="'Status Tiket: ' + waSubmission.status"></span>
+
+                    <h3 class="font-extrabold text-lg text-slate-900 dark:text-white" x-text="waSubmission.status === 'Approved' ? 'Verifikasi Disetujui Admin!' : (waSubmission.status === 'Rejected' ? 'Verifikasi Ditolak' : 'Data Sedang Diverifikasi oleh Admin Angkatan')"></h3>
+
+                    <p class="text-xs text-slate-600 dark:text-slate-300 max-w-md mx-auto leading-relaxed" x-text="waSubmission.status === 'Approved' ? 'Selamat! Identitas kamu telah terkonfirmasi. Silakan klik tombol di bawah untuk bergabung ke WhatsApp Official TI 2026.' : (waSubmission.status === 'Rejected' ? 'File PDF atau data yang dilampirkan tidak sesuai. Silakan kirim ulang dokumen resmi SIM-PMB.' : 'Terima kasih ' + waSubmission.name + '. Admin angkatan 2026 sedang mengecek kecocokan dokumen SIM-PMB kamu. Proses membutuhkan waktu maksimal 1x24 jam.')"></p>
+                  </div>
+
+                  <div class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border text-left text-xs space-y-1 max-w-md mx-auto">
+                    <p><strong>Kode Tiket:</strong> <span x-text="waSubmission.id"></span></p>
+                    <p><strong>Nama:</strong> <span x-text="waSubmission.name"></span></p>
+                    <p><strong>NIM:</strong> <span x-text="waSubmission.nim"></span></p>
+                    <p><strong>Dokumen:</strong> <span x-text="waSubmission.fileName"></span></p>
+                  </div>
+
+                  <template x-if="waSubmission.status === 'Approved'">
+                    <a :href="waSubmission.waLink" target="_blank" class="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 transition">
+                      <i data-lucide="message-circle" class="w-4 h-4"></i>
+                      <span>Masuk Grup WhatsApp Official Sekarang</span>
+                    </a>
+                  </template>
+
+                  <!-- Simulated Admin Status Change Button for Testing -->
+                  <div class="pt-4 border-t border-slate-200 dark:border-slate-800">
+                    <p class="text-[11px] text-slate-400 mb-2">Simulasi Cepat Status (Untuk Pengujian):</p>
+                    <div class="flex justify-center space-x-2">
+                      <button @click="updateWAStatusByAdmin(waSubmission.id, 'Approved')" class="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-bold text-[11px]">Set Approved ✅</button>
+                      <button @click="updateWAStatusByAdmin(waSubmission.id, 'Pending')" class="px-3 py-1 rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 font-bold text-[11px]">Set Pending ⏳</button>
+                      <button @click="updateWAStatusByAdmin(waSubmission.id, 'Rejected')" class="px-3 py-1 rounded-lg bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300 font-bold text-[11px]">Set Rejected ❌</button>
+                    </div>
+                  </div>
+
+                </div>
+              </template>
+
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- PAGE 10: PANEL ADMIN -->
+        <div x-show="currentTab === 'admin'" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" class="space-y-6">
+          
+          <div>
+            <h2 class="text-2xl font-extrabold tracking-tight">Panel Admin Angkatan 2026</h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Area khusus pengurus angkatan untuk mengelola pengumuman, tugas, dan verifikasi pendaftaran WA.</p>
+          </div>
+
+          <!-- Password Login Prompt if not logged in -->
+          <template x-if="!adminLoggedIn">
+            <div class="max-w-md mx-auto glass-card p-8 rounded-3xl border space-y-5 text-center shadow-xl">
+              <div class="w-12 h-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center mx-auto">
+                <i data-lucide="lock" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-base text-slate-900 dark:text-white">Masuk Panel Admin</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Masukkan password admin angkatan dummy (Default: <code class="font-mono text-brand-500 font-bold">admin2026</code>)</p>
+              </div>
+
+              <input type="password" x-model="adminPasswordInput" @keyup.enter="loginAdmin()" placeholder="Masukkan password admin..." class="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-purple-500 focus:outline-none">
+
+              <button @click="loginAdmin()" class="w-full py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs shadow-md transition">
+                Login Admin
+              </button>
+            </div>
+          </template>
+
+          <!-- Admin Dashboard View -->
+          <template x-if="adminLoggedIn">
+            <div class="space-y-6">
+              
+              <div class="flex items-center justify-between p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30">
+                <div class="flex items-center space-x-2">
+                  <i data-lucide="shield-check" class="w-5 h-5 text-purple-500"></i>
+                  <span class="font-bold text-xs text-purple-900 dark:text-purple-200">Mode Admin Aktif • Pengurus Angkatan 2026</span>
+                </div>
+                <button @click="logoutAdmin()" class="px-3 py-1 rounded-xl bg-rose-500 text-white font-bold text-xs hover:bg-rose-600 transition">
+                  Logout Admin
+                </button>
+              </div>
+
+              <!-- Admin Tabs Navigation -->
+              <div class="flex items-center space-x-2 border-b border-slate-200 dark:border-slate-800 pb-3">
+                <button @click="adminTab = 'wa'" :class="adminTab === 'wa' ? 'bg-purple-600 text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'" class="px-4 py-2 rounded-xl text-xs transition">
+                  Verifikasi WA (<span x-text="waSubmissions.length"></span>)
+                </button>
+                <button @click="adminTab = 'tasks'" :class="adminTab === 'tasks' ? 'bg-purple-600 text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'" class="px-4 py-2 rounded-xl text-xs transition">
+                  Kelola Tugas
+                </button>
+                <button @click="adminTab = 'news'" :class="adminTab === 'news' ? 'bg-purple-600 text-white font-bold' : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'" class="px-4 py-2 rounded-xl text-xs transition">
+                  Kelola Pengumuman
+                </button>
+              </div>
+
+              <!-- Tab 1: Verifikasi WA Admin List -->
+              <div x-show="adminTab === 'wa'" class="space-y-3">
+                <template x-for="sub in waSubmissions" :key="sub.id">
+                  <div class="glass-card p-4 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div class="space-y-1">
+                      <div class="flex items-center space-x-2">
+                        <span class="font-bold text-sm text-slate-900 dark:text-white" x-text="sub.name"></span>
+                        <span class="text-xs text-slate-400" x-text="'(' + sub.nim + ')'"></span>
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold" :class="{
+                          'bg-amber-100 text-amber-700': sub.status === 'Pending',
+                          'bg-emerald-100 text-emerald-700': sub.status === 'Approved',
+                          'bg-rose-100 text-rose-700': sub.status === 'Rejected'
+                        }" x-text="sub.status"></span>
+                      </div>
+                      <p class="text-xs text-slate-500" x-text="'Dokumen: ' + sub.fileName + ' • Tiket: ' + sub.id"></p>
+                    </div>
+
+                    <div class="flex items-center space-x-2">
+                      <button @click="updateWAStatusByAdmin(sub.id, 'Approved')" class="px-3 py-1.5 rounded-xl bg-emerald-600 text-white font-bold text-xs hover:bg-emerald-700 transition">
+                        Approve ✅
+                      </button>
+                      <button @click="updateWAStatusByAdmin(sub.id, 'Rejected')" class="px-3 py-1.5 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 transition">
+                        Reject ❌
+                      </button>
+                    </div>
+                  </div>
+                </template>
+
+                <template x-if="waSubmissions.length === 0">
+                  <p class="text-xs text-slate-400 italic text-center py-6">Belum ada data pendaftar verifikasi WA yang masuk.</p>
+                </template>
+              </div>
+
+              <!-- Tab 2: Admin Add Tasks -->
+              <div x-show="adminTab === 'tasks'" class="space-y-4">
+                <div class="glass-card p-6 rounded-3xl border space-y-4">
+                  <h3 class="font-bold text-sm">Input Tugas Resmi Angkatan</h3>
+                  <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <input type="text" x-model="newTaskForm.title" placeholder="Judul Tugas Resmi" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent">
+                    <input type="text" x-model="newTaskForm.course" placeholder="Mata Kuliah" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent">
+                    <input type="date" x-model="newTaskForm.deadline" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent">
+                    <select x-model="newTaskForm.priority" class="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent">
+                      <option value="Rendah">Prioritas Rendah</option>
+                      <option value="Sedang">Prioritas Sedang</option>
+                      <option value="Tinggi">Prioritas Tinggi</option>
+                      <option value="Sangat Tinggi">Prioritas Sangat Tinggi</option>
+                    </select>
+                  </div>
+                  <button @click="createTask()" class="px-5 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 transition">
+                    Publish Tugas ke Seluruh Mahasiswa
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tab 3: Admin News Management -->
+              <div x-show="adminTab === 'news'" class="space-y-4">
+                <div class="glass-card p-6 rounded-3xl border space-y-4">
+                  <h3 class="font-bold text-sm">Publish Pengumuman / Buletin Baru</h3>
+                  <div class="space-y-3">
+                    <input type="text" x-model="newNewsForm.title" placeholder="Judul Pengumuman" class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent">
+                    <input type="text" x-model="newNewsForm.summary" placeholder="Ringkasan Singkat (Highlight)" class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent">
+                    <textarea x-model="newNewsForm.content" rows="3" placeholder="Isi Pengumuman Lengkap..." class="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"></textarea>
+                    
+                    <div class="flex items-center justify-between">
+                      <label class="flex items-center space-x-2 text-xs font-semibold">
+                        <input type="checkbox" x-model="newNewsForm.pinned" class="rounded text-purple-600">
+                        <span>Disematkan di Dashboard (Pinned)</span>
+                      </label>
+                      <button @click="addNewsByAdmin()" class="px-5 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 transition">
+                        Publish Pengumuman
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Existing News list with delete action -->
+                <div class="space-y-2">
+                  <template x-for="n in newsList" :key="n.id">
+                    <div class="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 border flex items-center justify-between text-xs">
+                      <span class="font-bold truncate max-w-md" x-text="n.title"></span>
+                      <button @click="deleteNewsByAdmin(n.id)" class="text-rose-500 hover:underline font-bold">Hapus</button>
+                    </div>
+                  </template>
+                </div>
+              </div>
+
+            </div>
+          </template>
+
+        </div>
+
+      </div>
+
+      <!-- FOOTER -->
+      <footer class="mt-auto border-t border-slate-200 dark:border-slate-800 px-4 lg:px-8 py-6 text-center text-xs text-slate-500 dark:text-slate-400 space-y-2">
+        <p class="font-semibold text-slate-700 dark:text-slate-300">
+          INFOTIK 26 &copy; 2026 Teknik Informatika - Universitas Muhammadiyah Kalimantan Timur.
+        </p>
+        <p class="text-[11px] text-slate-400">
+          Dibuat dengan ❤️ oleh Mahasiswa Teknik Informatika Angkatan 2026 UMKT untuk Angkatan 2026.
+        </p>
+      </footer>
+
+    </main>
+
+  </div>
+
+  <!-- MOBILE BOTTOM NAVIGATION BAR -->
+  <nav class="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass-nav border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center justify-around">
+    <button @click="setTab('dashboard')" :class="currentTab === 'dashboard' ? 'text-brand-500 font-bold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'" class="flex flex-col items-center space-y-1">
+      <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+      <span class="text-[10px]">Home</span>
+    </button>
+
+    <button @click="setTab('jadwal')" :class="currentTab === 'jadwal' ? 'text-brand-500 font-bold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'" class="flex flex-col items-center space-y-1">
+      <i data-lucide="calendar" class="w-5 h-5"></i>
+      <span class="text-[10px]">Jadwal</span>
+    </button>
+
+    <button @click="setTab('masta')" :class="currentTab === 'masta' ? 'text-brand-500 font-bold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'" class="flex flex-col items-center space-y-1">
+      <i data-lucide="compass" class="w-5 h-5"></i>
+      <span class="text-[10px]">Masta</span>
+    </button>
+
+    <button @click="setTab('tugas')" :class="currentTab === 'tugas' ? 'text-brand-500 font-bold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'" class="flex flex-col items-center space-y-1">
+      <i data-lucide="check-square" class="w-5 h-5"></i>
+      <span class="text-[10px]">Tugas</span>
+    </button>
+
+    <button @click="setTab('wagroup')" :class="currentTab === 'wagroup' ? 'text-emerald-500 font-bold' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'" class="flex flex-col items-center space-y-1">
+      <i data-lucide="message-circle" class="w-5 h-5"></i>
+      <span class="text-[10px]">Grup WA</span>
+    </button>
+  </nav>
+
+</body>
+</html>
