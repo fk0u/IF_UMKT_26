@@ -11,14 +11,17 @@ Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOT
 - ✅ **Sistem Otorisasi Peran (Authorization)**:
   - Role `'user'`: Akses terbatas ke Dashboard, Coming Soon (Jadwal, BTQ, Tugas), Tips, News, Forum (posting dengan nama otomatis terikat ke sesi login), dan verifikasi grup WA pribadi.
   - Role `'admin'`: Akses eksklusif ke **Dashboard Admin Terpadu** (statistik, verifikasi berkas PDF OCR, direktori user mahasiswa, publish buletin, & publish tugas).
-- ✅ **Sidebar Dinamis & Logout**:
-  - Profil pengguna aktif ditampilkan di bagian bawah sidebar beserta tombol Logout.
+- ✅ **Halaman Coming Soon**:
+  - Halaman **Jadwal Kuliah**, **Ujian BTQ**, dan **Daftar Tugas** dikosongkan secara visual dan diganti dengan status "Coming Soon" Hallmark yang bersih dan informatif.
+- ✅ **Dokumentasi & Git**:
+  - Berkas `.gitignore` lengkap dan berstandar produksi telah ditambahkan.
+  - Berkas `README.md` dokumentasi sangat lengkap berbahasa Indonesia telah dibuat di root proyek.
 - ✅ Successful production build (`npm run build`).
-- ✅ Updated Graphify Knowledge Graph (2597 nodes, 2995 edges, 230 communities).
+- ✅ Updated Graphify Knowledge Graph (2604 nodes, 3001 edges, 221 communities).
 
 ## Key Files & Structure
+- [README.md](file:///d:/Project/IF_UMKT_26/README.md) - Dokumentasi lengkap proyek
+- [.gitignore](file:///d:/Project/IF_UMKT_26/.gitignore) - Gitignore produksi & corpus safety
 - [src/context/AuthContext.tsx](file:///d:/Project/IF_UMKT_26/src/context/AuthContext.tsx) - Auth & session management
 - [src/App.tsx](file:///d:/Project/IF_UMKT_26/src/App.tsx) - Gerbang Login/Signup & router view
-- [src/components/layout/Sidebar.tsx](file:///d:/Project/IF_UMKT_26/src/components/layout/Sidebar.tsx) - Profil & navigasi dinamis role
 - [src/components/views/AdminView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/AdminView.tsx) - Kontrol panel pengurus angkatan
-- [src/components/views/ForumView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/ForumView.tsx) - Forum terikat dengan profil user aktif
