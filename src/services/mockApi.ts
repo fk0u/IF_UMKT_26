@@ -245,18 +245,75 @@ export const mockApi = {
     return data ? JSON.parse(data) : [];
   },
 
-  async submitWAGroupVerification(formData: { name: string; nim: string; fileName: string; fileSize: string }): Promise<WASubmission> {
-    await delay(400);
+  async submitWAGroupVerification(formData: { 
+    name: string; 
+    nim: string; 
+    whatsapp: string; 
+    fileName: string; 
+    fileSize: string;
+    ocrSimulateSuccess?: boolean;
+    ocrData?: {
+      namaSurat?: string;
+      nimSurat?: string;
+      prodiSurat?: string;
+      tanggalSurat?: string;
+    }
+  }): Promise<WASubmission> {
+    await delay(1000); // simulated processing delay
     const submissions = await this.getWASubmissions();
     const ticketId = 'WA26-' + Math.floor(100000 + Math.random() * 900000);
+
+    // 1. Check NIM prefix
+    const isAngkatan2026 = formData.nim.trim().startsWith('26');
+    let status: WASubmission['status'] = 'Pending';
+    let rejectionReason = '';
+
+    if (!isAngkatan25OrOther(formData.nim) && !isAngkatan2026) {
+      status = 'Rejected';
+      const year = formData.nim.trim().substring(0, 2);
+      rejectionReason = `NIM Terdeteksi Angkatan 20${year || '24/2025'}. Hanya Mahasiswa Angkatan 2026 yang diperbolehkan bergabung grup WA Resmi.`;
+    } else {
+      // NIM starts with 26. Check simulated OCR data.
+      const ocr = formData.ocrData || {
+        namaSurat: formData.name,
+        nimSurat: formData.nim,
+        prodiSurat: 'Teknik Informatika',
+        tanggalSurat: '18 Juli 2026'
+      };
+
+      const nameMatches = ocr.namaSurat?.toLowerCase().trim() === formData.name.toLowerCase().trim();
+      const nimMatches = ocr.nimSurat?.trim() === formData.nim.trim();
+      const prodiMatches = ocr.prodiSurat?.toLowerCase().includes('teknik informatika');
+      const dateMatches = ocr.tanggalSurat?.includes('2026');
+
+      if (formData.ocrSimulateSuccess === false) {
+        status = 'Rejected';
+        rejectionReason = 'Gagal OCR: Ketidakcocokan Dokumen. ';
+        if (!nameMatches) rejectionReason += 'Nama di surat tidak cocok. ';
+        if (!nimMatches) rejectionReason += 'NIM di surat tidak cocok. ';
+        if (!prodiMatches) rejectionReason += 'Prodi di surat bukan Teknik Informatika. ';
+        if (!dateMatches) rejectionReason += 'Tanggal Surat bukan tahun 2026. ';
+      } else {
+        // Automatic OCR Approval
+        status = 'Approved';
+      }
+    }
+
+    function isAngkatan25OrOther(nim: string) {
+      const prefix = nim.trim().substring(0, 2);
+      return prefix !== '' && prefix !== '26' && !isNaN(Number(prefix));
+    }
+
     const submission: WASubmission = {
       id: ticketId,
       name: formData.name,
       nim: formData.nim,
+      whatsapp: formData.whatsapp,
       fileName: formData.fileName || 'Surat_Lolos_Seleksi_SIMPMB.pdf',
       fileSize: formData.fileSize || '1.2 MB',
       submittedAt: new Date().toLocaleString('id-ID'),
-      status: 'Pending',
+      status: status,
+      rejectionReason: rejectionReason,
       waLink: 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
     };
 
@@ -268,10 +325,10 @@ export const mockApi = {
     return submission;
   },
 
-  async updateWASubmissionStatus(ticketId: string, status: WASubmission['status']): Promise<WASubmission[]> {
+  async updateWASubmissionStatus(ticketId: string, status: WASubmission['status'], rejectionReason?: string): Promise<WASubmission[]> {
     await delay(200);
     const submissions = await this.getWASubmissions();
-    const updated = submissions.map(s => s.id === ticketId ? { ...s, status } : s);
+    const updated = submissions.map(s => s.id === ticketId ? { ...s, status, rejectionReason: rejectionReason || s.rejectionReason } : s);
     localStorage.setItem('infotik_wa_submissions', JSON.stringify(updated));
 
     const mySub = localStorage.getItem('infotik_my_wa_submission');
@@ -279,6 +336,7 @@ export const mockApi = {
       const parsed: WASubmission = JSON.parse(mySub);
       if (parsed.id === ticketId) {
         parsed.status = status;
+        if (rejectionReason) parsed.rejectionReason = rejectionReason;
         localStorage.setItem('infotik_my_wa_submission', JSON.stringify(parsed));
       }
     }

@@ -71,10 +71,12 @@ export interface WASubmission {
   id: string;
   name: string;
   nim: string;
+  whatsapp: string;
   fileName: string;
   fileSize: string;
   submittedAt: string;
-  status: 'Pending' | 'Approved' | 'Rejected';
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Waitlist';
+  rejectionReason?: string;
   waLink: string;
 }
 

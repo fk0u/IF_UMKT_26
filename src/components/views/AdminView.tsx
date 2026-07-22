@@ -94,11 +94,9 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
         cell: (info) => <span className="font-mono-tag text-xs font-semibold text-slate-700 dark:text-slate-300">{info.getValue() as string}</span>,
       },
       {
-        accessorKey: 'fileName',
-        header: 'Berkas SIM-PMB',
-        cell: (info) => (
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono-tag">{info.getValue() as string} ({info.row.original.fileSize})</span>
-        ),
+        accessorKey: 'whatsapp',
+        header: 'Nomor WhatsApp',
+        cell: (info) => <span className="font-mono-tag text-xs text-slate-700 dark:text-slate-300">{info.getValue() as string}</span>,
       },
       {
         accessorKey: 'status',
@@ -112,10 +110,12 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
                   ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300'
                   : st === 'Rejected'
                   ? 'bg-rose-100 text-rose-700 dark:bg-rose-900/50 dark:text-rose-300'
-                  : 'bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300'
+                  : st === 'Waitlist'
+                  ? 'bg-amber-100 text-amber-800 dark:bg-amber-900/50 dark:text-amber-300'
+                  : 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300'
               }`}
             >
-              {st}
+              {st === 'Waitlist' ? '⏳ Waitlist' : st}
             </span>
           );
         },
@@ -135,7 +135,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
                 <span>Approve</span>
               </button>
               <button
-                onClick={() => handleStatusChange(item.id, 'Rejected')}
+                onClick={() => {
+                  const reason = prompt("Masukkan alasan penolakan berkas:", item.rejectionReason || "Surat keterangan kelulusan tidak terbaca.");
+                  if (reason !== null) {
+                    updateWAStatusMutation.mutate({ ticketId: item.id, status: 'Rejected', rejectionReason: reason }, {
+                      onSuccess: () => onShowToast('Status Pendaftaran', `Status ${item.id} diubah ke Rejected!`, 'success')
+                    });
+                  }
+                }}
                 className="px-2.5 py-1 rounded-xl bg-rose-600 text-white font-bold text-xs hover:bg-rose-700 transition flex items-center space-x-1"
               >
                 <X className="w-3.5 h-3.5" />

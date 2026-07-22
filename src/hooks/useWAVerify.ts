@@ -11,16 +11,28 @@ export const useWAVerify = () => {
   });
 
   const submitWAVerificationMutation = useMutation({
-    mutationFn: (formData: { name: string; nim: string; fileName: string; fileSize: string }) =>
-      mockApi.submitWAGroupVerification(formData),
+    mutationFn: (formData: { 
+      name: string; 
+      nim: string; 
+      whatsapp: string; 
+      fileName: string; 
+      fileSize: string;
+      ocrSimulateSuccess?: boolean;
+      ocrData?: {
+        namaSurat?: string;
+        nimSurat?: string;
+        prodiSurat?: string;
+        tanggalSurat?: string;
+      }
+    }) => mockApi.submitWAGroupVerification(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wa_submissions'] });
     },
   });
 
   const updateWAStatusMutation = useMutation({
-    mutationFn: ({ ticketId, status }: { ticketId: string; status: WASubmission['status'] }) =>
-      mockApi.updateWASubmissionStatus(ticketId, status),
+    mutationFn: ({ ticketId, status, rejectionReason }: { ticketId: string; status: WASubmission['status']; rejectionReason?: string }) =>
+      mockApi.updateWASubmissionStatus(ticketId, status, rejectionReason),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wa_submissions'] });
     },

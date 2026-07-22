@@ -118,7 +118,7 @@ export const App: React.FC = () => {
               />
             )}
 
-            {currentTab === 'jadwal' && <ScheduleView onShowToast={showToast} />}
+            {currentTab === 'jadwal' && <ScheduleView />}
             {currentTab === 'masta' && <MastaView />}
             {currentTab === 'btq' && <BtqView />}
             {currentTab === 'tips' && <TipsView />}
