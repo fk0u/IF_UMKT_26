@@ -11,9 +11,11 @@ import {
   Newspaper,
   MessageCircle,
   ShieldCheck,
-  Terminal
+  Terminal,
+  LogOut
 } from 'lucide-react';
 import { TabType } from '../../types';
+import { useAuth } from '../../context/AuthContext';
 
 interface SidebarProps {
   currentTab: TabType;
@@ -21,6 +23,8 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSetTab }) => {
+  const { currentUser, logout } = useAuth();
+
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'jadwal', label: 'Jadwal Kuliah', icon: Calendar },
@@ -88,24 +92,45 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentTab, onSetTab }) => {
           <span>Gabung Grup WA</span>
         </button>
 
-        <button
-          onClick={() => onSetTab('admin')}
-          className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-medium transition-all duration-150 mt-2 ${
-            currentTab === 'admin'
-              ? 'bg-purple-600 text-white shadow-hallmark-sm'
-              : 'text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/60'
-          }`}
-        >
-          <ShieldCheck className="w-4 h-4" />
-          <span>Panel Admin</span>
-        </button>
+        {currentUser?.role === 'admin' && (
+          <button
+            onClick={() => onSetTab('admin')}
+            className={`w-full flex items-center space-x-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all duration-150 mt-2 ${
+              currentTab === 'admin'
+                ? 'bg-purple-600 text-white shadow-hallmark-sm'
+                : 'text-purple-600 dark:text-purple-400 hover:bg-purple-50 dark:hover:bg-purple-950/40'
+            }`}
+          >
+            <ShieldCheck className="w-4 h-4" />
+            <span>Panel Admin</span>
+          </button>
+        )}
       </nav>
 
-      {/* Footer Info */}
-      <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 text-[11px] text-slate-400">
-        <p className="font-semibold text-slate-700 dark:text-slate-300">Teknik Informatika '26</p>
-        <p className="text-[10px] text-slate-400">UMKT Samarinda</p>
-      </div>
+      {/* User Profile & Logout */}
+      {currentUser && (
+        <div className="pt-4 border-t border-slate-200/80 dark:border-slate-800/80 flex items-center justify-between space-x-2">
+          <div className="flex items-center space-x-2.5 truncate">
+            <img src={currentUser.avatar} alt="avatar" className="w-8 h-8 rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5 border border-slate-200 dark:border-slate-700 shrink-0" />
+            <div className="truncate text-left">
+              <h4 className="font-bold text-xs text-slate-900 dark:text-white truncate">{currentUser.name}</h4>
+              <p className="text-[10px] text-slate-400 font-mono-tag truncate">
+                {currentUser.role === 'admin' ? 'Admin Angkatan' : currentUser.nim}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => {
+              logout();
+              window.location.reload();
+            }}
+            className="p-1.5 rounded-lg text-slate-400 hover:text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/30 transition shrink-0"
+            title="Keluar / Logout"
+          >
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
+      )}
     </aside>
   );
 };

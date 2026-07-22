@@ -111,3 +111,14 @@ export interface AcademicTip {
   tagColor: string;
   content: string;
 }
+
+export interface UserAccount {
+  id: string;
+  name: string;
+  nim: string;
+  whatsapp: string;
+  email: string;
+  password?: string;
+  role: 'user' | 'admin';
+  avatar: string;
+}

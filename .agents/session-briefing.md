@@ -4,20 +4,22 @@
 Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOTIK 26) berbasis **React + TypeScript + Vite + TanStack Query + TanStack Table** dengan **Hallmark Anti-AI-Slop Redesign**.
 
 ## Current Status
-- ✅ **100% Visual Redesign Complete**:
-  - Semua view halaman (Dashboard, Schedule, Masta, BTQ, Tips, Tasks, Forum, News, WA, Admin) telah di-redesign penuh menggunakan standar Hallmark Skill.
-  - Mengubah seluruh container generic ke `hm-card` dan typography token yang konsisten.
-  - Memakai font *Plus Jakarta Sans* untuk headings/display, *Inter* untuk body, dan *JetBrains Mono* (`font-mono-tag`) untuk kode NIM, SKS, nomor tiket WA, jam kuliah, dan nomor ruangan.
-- ✅ All TanStack Query & TanStack Table integrations verified.
+- ✅ **Halaman Coming Soon**:
+  - Halaman **Jadwal Kuliah**, **Ujian BTQ**, dan **Daftar Tugas** dikosongkan secara visual dan diganti dengan status "Coming Soon" Hallmark yang bersih dan informatif.
+- ✅ **Verifikasi Grup WA (Real Case)**:
+  - Input form kini menyertakan **Nomor WhatsApp**.
+  - Pemeriksaan awalan NIM: Diawali dengan `26` dianggap lolos verifikasi awal Angkatan 2026. Diawali dengan `25`, `24`, dll. ditolak otomatis.
+  - Simulasi **OCR Scanner PDF**: Animasi progress scanner selama 2 detik untuk memeriksa kecocokan Nama, NIM, Prodi (Teknik Informatika), dan Tanggal Surat (Tahun 2026).
+  - Sistem **Waitlist Manual**: User yang gagal verifikasi otomatis dapat memindahkan tiketnya ke antrean waitlist manual untuk ditinjau oleh Admin.
+- ✅ **Admin Panel Update**:
+  - Menampilkan kolom Nomor WhatsApp dan mendukung status `Waitlist` pada tabel pendaftar.
 - ✅ Successful production build (`npm run build`).
-- ✅ Updated Graphify Knowledge Graph (2582 nodes, 2980 edges, 219 communities).
+- ✅ Updated Graphify Knowledge Graph (2585 nodes, 2968 edges, 219 communities).
 
 ## Key Files & Structure
-- [src/index.css](file:///d:/Project/IF_UMKT_26/src/index.css) - Hallmark CSS tokens & critique stamp
-- [tailwind.config.js](file:///d:/Project/IF_UMKT_26/tailwind.config.js) - Typography & theme scale
-- [src/components/views/MastaView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/MastaView.tsx) - Hallmark timeline Masta
-- [src/components/views/BtqView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/BtqView.tsx) - Hallmark BTQ guide
-- [src/components/views/TasksView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/TasksView.tsx) - Hallmark tasks manager
-- [src/components/views/ForumView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/ForumView.tsx) - Hallmark forum threads
-- [src/components/views/NewsView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/NewsView.tsx) - Hallmark news cards
-- [src/components/views/AdminView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/AdminView.tsx) - Hallmark Admin panel
+- [src/components/views/WAVerifyView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/WAVerifyView.tsx) - Form verifikasi & simulasi OCR/Waitlist
+- [src/components/views/AdminView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/AdminView.tsx) - Dashboard manajemen pendaftar & waitlist
+- [src/services/mockApi.ts](file:///d:/Project/IF_UMKT_26/src/services/mockApi.ts) - Validasi NIM, OCR checks, & Waitlist backend mock
+- [src/components/views/ScheduleView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/ScheduleView.tsx) - Coming Soon
+- [src/components/views/BtqView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/BtqView.tsx) - Coming Soon
+- [src/components/views/TasksView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/TasksView.tsx) - Coming Soon

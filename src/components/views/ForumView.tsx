@@ -1,19 +1,19 @@
-/* Hallmark · component: ForumView · macrostructure: Workbench-Bento Hybrid · genre: modern-minimal · theme: Custom Indigo-Midnight */
 import React, { useState } from 'react';
 import { MessageSquarePlus, ThumbsUp } from 'lucide-react';
 import { useForum } from '../../hooks/useForum';
+import { useAuth } from '../../context/AuthContext';
 
 interface ForumViewProps {
   onShowToast: (title: string, msg: string, type?: 'info' | 'success' | 'warning' | 'danger') => void;
 }
 
 export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
+  const { currentUser } = useAuth();
   const { forumQuery, createThreadMutation, upvoteThreadMutation, addReplyMutation } = useForum();
   const forumList = forumQuery.data || [];
   const [categoryFilter, setCategoryFilter] = useState<string>('Semua');
 
   const [newThread, setNewThread] = useState({
-    author: '',
     title: '',
     category: 'Umum & Peralatan',
     content: ''
@@ -32,10 +32,13 @@ export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
       return;
     }
 
-    createThreadMutation.mutate(newThread, {
+    createThreadMutation.mutate({
+      ...newThread,
+      author: currentUser?.name || 'Maba TI 2026'
+    }, {
       onSuccess: () => {
         onShowToast('Forum Diskusi', 'Diskusi baru berhasil diterbitkan!', 'success');
-        setNewThread({ author: '', title: '', category: 'Umum & Peralatan', content: '' });
+        setNewThread({ title: '', category: 'Umum & Peralatan', content: '' });
       }
     });
   };
@@ -53,7 +56,7 @@ export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
     if (!text || text.trim() === '') return;
 
     addReplyMutation.mutate(
-      { threadId, content: text, author: 'Maba TI 2026' },
+      { threadId, content: text, author: currentUser?.name || 'Maba TI 2026' },
       {
         onSuccess: () => {
           onShowToast('Balasan Forum', 'Balasan kamu berhasil diposting!', 'success');
@@ -98,20 +101,13 @@ export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
           <span>Buat Diskusi / Pertanyaan Baru</span>
         </h3>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <input
-            type="text"
-            value={newThread.author}
-            onChange={(e) => setNewThread({ ...newThread, author: e.target.value })}
-            placeholder="Nama Kamu"
-            className="px-3.5 py-2 text-xs rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 focus:border-brand-500 focus:outline-none"
-          />
+        <div className="grid grid-cols-1 gap-3">
           <input
             type="text"
             value={newThread.title}
             onChange={(e) => setNewThread({ ...newThread, title: e.target.value })}
-            placeholder="Judul pertanyaan / topik"
-            className="px-3.5 py-2 text-xs rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 focus:border-brand-500 focus:outline-none sm:col-span-2"
+            placeholder="Judul pertanyaan / topik bahasan..."
+            className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 focus:border-brand-500 focus:outline-none"
           />
         </div>
 
