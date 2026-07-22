@@ -1,3 +1,4 @@
+/* Hallmark · component: AdminView · macrostructure: Workbench-Bento Hybrid · genre: modern-minimal · theme: Custom Indigo-Midnight */
 import React, { useState, useMemo } from 'react';
 import {
   useReactTable,
@@ -29,7 +30,6 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
   const submissions = submissionsQuery.data || [];
   const newsList = newsQuery.data || [];
 
-  // Form states for Admin task/news creation
   const [newTask, setNewTask] = useState({
     title: '',
     course: 'Dasar Pemrograman',
@@ -84,20 +84,20 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
         cell: (info) => (
           <div>
             <h4 className="font-bold text-xs text-slate-900 dark:text-white">{info.getValue() as string}</h4>
-            <p className="text-[11px] text-slate-400">Tiket: {info.row.original.id}</p>
+            <p className="text-[11px] text-slate-400 font-mono-tag">Tiket: {info.row.original.id}</p>
           </div>
         ),
       },
       {
         accessorKey: 'nim',
         header: 'NIM',
-        cell: (info) => <span className="font-mono text-xs font-semibold text-slate-700 dark:text-slate-300">{info.getValue() as string}</span>,
+        cell: (info) => <span className="font-mono-tag text-xs font-semibold text-slate-700 dark:text-slate-300">{info.getValue() as string}</span>,
       },
       {
         accessorKey: 'fileName',
         header: 'Berkas SIM-PMB',
         cell: (info) => (
-          <span className="text-xs text-slate-500 dark:text-slate-400">{info.getValue() as string} ({info.row.original.fileSize})</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono-tag">{info.getValue() as string} ({info.row.original.fileSize})</span>
         ),
       },
       {
@@ -159,14 +159,14 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
   if (!adminLoggedIn) {
     return (
-      <div className="max-w-md mx-auto glass-card p-8 rounded-3xl border space-y-5 text-center shadow-xl">
+      <div className="max-w-md mx-auto hm-card p-8 rounded-3xl space-y-5 text-center shadow-xl">
         <div className="w-12 h-12 rounded-2xl bg-purple-500 text-white flex items-center justify-center mx-auto">
           <Lock className="w-6 h-6" />
         </div>
         <div>
           <h3 className="font-bold text-base text-slate-900 dark:text-white">Masuk Panel Admin</h3>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Masukkan password dummy (<code className="font-mono text-brand-500 font-bold">admin2026</code>)
+            Masukkan password dummy (<code className="font-mono-tag text-brand-500 font-bold">admin2026</code>)
           </p>
         </div>
 
@@ -176,7 +176,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
           onChange={(e) => setPasswordInput(e.target.value)}
           onKeyUp={(e) => e.key === 'Enter' && handleLogin()}
           placeholder="Password admin..."
-          className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-purple-500 focus:outline-none"
+          className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent focus:border-purple-500 focus:outline-none"
         />
 
         <button
@@ -239,7 +239,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
       {/* Tab 1: WA Verification Requests Table */}
       {adminTab === 'wa' && (
-        <div className="glass-card rounded-3xl border overflow-hidden shadow-xl">
+        <div className="hm-card rounded-3xl border overflow-hidden shadow-xl">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
@@ -275,7 +275,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
       {/* Tab 2: Admin Task Manager */}
       {adminTab === 'tasks' && (
-        <div className="glass-card p-6 rounded-3xl border space-y-4">
+        <div className="hm-card p-6 rounded-3xl border space-y-4">
           <h3 className="font-bold text-sm">Input Tugas Resmi Angkatan</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <input
@@ -283,25 +283,25 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
               value={newTask.title}
               onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
               placeholder="Judul Tugas Resmi"
-              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
             />
             <input
               type="text"
               value={newTask.course}
               onChange={(e) => setNewTask({ ...newTask, course: e.target.value })}
               placeholder="Mata Kuliah"
-              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
             />
             <input
               type="date"
               value={newTask.deadline}
               onChange={(e) => setNewTask({ ...newTask, deadline: e.target.value })}
-              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
             />
             <select
               value={newTask.priority}
               onChange={(e) => setNewTask({ ...newTask, priority: e.target.value as TaskItem['priority'] })}
-              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+              className="px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
             >
               <option value="Rendah">Prioritas Rendah</option>
               <option value="Sedang">Prioritas Sedang</option>
@@ -320,7 +320,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
                 }
               });
             }}
-            className="px-5 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 transition flex items-center space-x-1"
+            className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-bold text-xs hover:bg-slate-800 transition flex items-center space-x-1"
           >
             <Plus className="w-4 h-4" />
             <span>Publish Tugas ke Seluruh Mahasiswa</span>
@@ -331,7 +331,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
       {/* Tab 3: Admin News Manager */}
       {adminTab === 'news' && (
         <div className="space-y-4">
-          <div className="glass-card p-6 rounded-3xl border space-y-4">
+          <div className="hm-card p-6 rounded-3xl border space-y-4">
             <h3 className="font-bold text-sm">Publish Pengumuman / Buletin Baru</h3>
             <div className="space-y-3">
               <input
@@ -339,21 +339,21 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
                 value={newNews.title}
                 onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
                 placeholder="Judul Pengumuman"
-                className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+                className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
               />
               <input
                 type="text"
                 value={newNews.summary}
                 onChange={(e) => setNewNews({ ...newNews, summary: e.target.value })}
                 placeholder="Ringkasan Singkat (Highlight)"
-                className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+                className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
               />
               <textarea
                 value={newNews.content}
                 onChange={(e) => setNewNews({ ...newNews, content: e.target.value })}
                 rows={3}
                 placeholder="Isi Pengumuman Lengkap..."
-                className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent"
+                className="w-full px-3.5 py-2 text-xs rounded-xl bg-slate-100 dark:bg-slate-900 border border-transparent"
               ></textarea>
 
               <div className="flex items-center justify-between">
@@ -376,7 +376,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
                       }
                     });
                   }}
-                  className="px-5 py-2 rounded-xl bg-purple-600 text-white font-bold text-xs hover:bg-purple-700 transition"
+                  className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-950 font-bold text-xs hover:bg-slate-800 transition"
                 >
                   Publish Pengumuman
                 </button>
@@ -386,7 +386,7 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
           <div className="space-y-2">
             {newsList.map((n) => (
-              <div key={n.id} className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 border flex items-center justify-between text-xs">
+              <div key={n.id} className="p-3 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs">
                 <span className="font-bold truncate max-w-md">{n.title}</span>
                 <button
                   onClick={() => {

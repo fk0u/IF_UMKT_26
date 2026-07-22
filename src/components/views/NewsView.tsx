@@ -1,3 +1,4 @@
+/* Hallmark · component: NewsView · macrostructure: Workbench-Bento Hybrid · genre: modern-minimal · theme: Custom Indigo-Midnight */
 import React, { useState } from 'react';
 import { Pin } from 'lucide-react';
 import { useNews } from '../../hooks/useNews';
@@ -34,14 +35,14 @@ export const NewsView: React.FC<NewsViewProps> = ({ searchQuery }) => {
           </p>
         </div>
 
-        <div className="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl overflow-x-auto no-scrollbar">
+        <div className="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-900 rounded-xl overflow-x-auto no-scrollbar border border-slate-300/40 dark:border-slate-800/60">
           {['Semua', 'Pengumuman Resmi', 'Akademik & Masta', 'Laboratorium'].map((cat) => (
             <button
               key={cat}
               onClick={() => setCategoryFilter(cat)}
               className={`px-3 py-1.5 rounded-lg text-xs transition whitespace-nowrap ${
                 categoryFilter === cat
-                  ? 'bg-brand-600 text-white font-bold shadow'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-bold shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -52,11 +53,11 @@ export const NewsView: React.FC<NewsViewProps> = ({ searchQuery }) => {
       </div>
 
       {newsQuery.isLoading ? (
-        <div className="text-center py-8 text-xs text-slate-500">Memuat berita buletin via TanStack Query...</div>
+        <div className="text-center py-8 text-xs text-slate-500">Memuat berita buletin...</div>
       ) : (
         <div className="space-y-4">
           {filteredNews.map((news) => (
-            <div key={news.id} className="glass-card p-6 rounded-3xl border space-y-3 hover:border-brand-500/40 transition">
+            <div key={news.id} className="hm-card p-6 rounded-3xl space-y-3 hover:border-brand-500/40 transition">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center space-x-2">
                   <span className="px-2.5 py-0.5 rounded-full font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
@@ -69,10 +70,10 @@ export const NewsView: React.FC<NewsViewProps> = ({ searchQuery }) => {
                     </span>
                   )}
                 </div>
-                <span className="text-slate-400">{news.date}</span>
+                <span className="text-slate-400 font-mono-tag">{news.date}</span>
               </div>
 
-              <h3 className="font-extrabold text-lg text-slate-900 dark:text-white">{news.title}</h3>
+              <h3 className="font-extrabold text-lg text-slate-900 dark:text-white leading-snug">{news.title}</h3>
               <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{news.content}</p>
 
               <div className="pt-2 text-[11px] text-slate-400 font-medium">
