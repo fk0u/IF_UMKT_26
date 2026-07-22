@@ -1,96 +1,120 @@
-# INFOTIK 26 - Pusat Informasi Mahasiswa Teknik Informatika Angkatan 2026
+# INFOTIK 26 - Pusat Informasi Mahasiswa Teknik Informatika 2026
 
-![INFOTIK 26](https://img.shields.io/badge/UMKT-Teknik%20Informatika%202026-6366f1?style=for-the-badge)
-![Tech](https://img.shields.io/badge/Tailwind_CSS_v3-CDN-38bdf8?style=for-the-badge&logo=tailwindcss)
-![JS](https://img.shields.io/badge/Alpine.js-v3-8bc34a?style=for-the-badge&logo=alpine.js)
+Website **Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026** (INFOTIK 26) dirancang khusus sebagai "one-stop hub" resmi bagi mahasiswa baru untuk mempercepat adaptasi akademik, meminimalisir pertanyaan berulang di grup WhatsApp angkatan, dan menyajikan informasi secara terpusat, modern, dan bebas dari AI slop.
 
-**INFOTIK 26** adalah website Sistem Informasi Pusat Mahasiswa Baru Teknik Informatika Angkatan 2026 Universitas Muhammadiyah Kalimantan Timur (UMKT) yang berfungsi sebagai *One-Stop Information Hub* modern, clean, responsif, dan user-friendly.
+Aplikasi ini dibangun menggunakan arsitektur modern **React + TypeScript + Vite** dengan manajemen state server berbasis **TanStack Query** dan rendering data tabular berkinerja tinggi menggunakan **TanStack Table**.
 
 ---
 
-## 🌟 Fitur-Fitur Utama
-
-1. **Dashboard / Home**: Highlight pengumuman penting, stat cards angkatan, link akses cepat, dan petunjuk maba.
-2. **Jadwal Kuliah Semester 1**:
-   - Filter per hari (Senin, Selasa, Rabu, Sabtu).
-   - Lokasi presisi ruang kelas (`GF-3.02`, `GF-3.04`, `GF-3.03`, `Lab GF-1.02`).
-   - Ekspor otomatis ke **Google Calendar** & Download file `.ics` jadwal.
-3. **Panduan Masta (Orientasi)**:
-   - Timeline interaktif tahap orientasi (Universitas, FST, Prodi TI, IMM, & Malam Inagurasi).
-   - Ketentuan dresscode (Putra & Putri), barang bawaan wajib, dan Do's & Don'ts.
-   - *Disclaimer* jelas acuan info.
-4. **Panduan Ujian BTQ**:
-   - Peringatan syarat mutlak kelulusan Skripsi/Pendadaran.
-   - Syarat kelulusan & konsekuensi matrikulasi.
-   - Tips kelulusan nilai A & daftar 23 surah pendek hafalan Juz 30.
-5. **Tips Akademik & Sosial**: Card kasual & relatable seputar strategi koding, manajemen waktu, IPK 3.50+, dan etika menghubungi dosen.
-6. **Daftar Tugas (Task List)**: Sistem pencatatan tugas dengan indikator prioritas, sisa deadline, dan filter status (Belum, Dalam Proses, Selesai).
-7. **Forum Diskusi Angkatan**: Thread tanya-jawab antar mahasiswa baru per kategori (Koding, Info Kost, Masta, Umum) dengan fitur upvote & balasan.
-8. **Buletin Informasi**: Berita & pengumuman angkatan dengan pencarian kata kunci dan filter kategori.
-9. **Verifikasi Grup WA**: Form upload Surat Keterangan Lolos Seleksi (PDF) dengan status pelacakan tiket verifikasi real-time (`Pending` ⏳ ➔ `Approved` ✅ ➔ Link Akses WhatsApp Official).
-10. **Panel Admin (Simulasi)**:
-    - Login password dummy: `admin2026` / `infotik26`.
-    - Kelola & setujui/tolak pendaftar grup WA.
-    - Publish tugas resmi angkatan.
-    - Publish & hapus pengumuman buletin.
+## 🎨 Desain Visual (Hallmark Standard)
+Seluruh antarmuka dikembangkan dengan standar estetika tinggi (**Anti-AI-Slop**):
+- **Typography**: Menggunakan font *Plus Jakarta Sans* untuk tampilan utama, *Inter* untuk tulisan konten, dan *JetBrains Mono* (`font-mono-tag`) untuk data teknis seperti NIM, nomor ruangan, jam kuliah, dan nomor tiket.
+- **Card Layout**: Mengganti template standard card yang monoton dengan border hairline asimetris (`hm-card`).
+- **Gradients**: Meniadakan gradient warna mencolok (ungu-biru), digantikan dengan layout *Midnight Dark Theme* solid (`#070a10`) yang elegan dan bersih.
 
 ---
 
-## 📁 Struktur Folder Project
+## 🛠️ Fitur-Fitur Utama
 
-```
+### 1. Sistem Autentikasi Akun (Login & Register)
+- Seluruh konten diproteksi oleh gerbang login aman.
+- Saat mendaftar akun baru:
+  - Input form: Nama Lengkap, NIM, WhatsApp, Email, dan Password.
+  - **Validasi NIM**: Sistem secara real-time menolak pendaftaran jika awalan NIM bukan `26` (Mahasiswa Angkatan 2026), kecuali mendaftar sebagai pengurus angkatan menggunakan kode undangan admin khusus.
+
+### 2. Verifikasi Grup WhatsApp Resmi (OCR PDF & Waitlist)
+- **Simulasi OCR PDF**: Saat mahasiswa mengunggah Surat Keterangan Kelulusan SIM-PMB format PDF, sistem akan menjalankan scanner laser OCR selama 2 detik untuk memeriksa validitas dokumen:
+  - Kecocokan Nama Lengkap dan NIM.
+  - Validitas Program Studi (harus "Teknik Informatika").
+  - Tanggal terbit surat (harus tahun 2026).
+- **Hasil Verifikasi**:
+  - **Approved**: Jika semua data cocok, tautan resmi grup WhatsApp angkatan akan ditampilkan langsung.
+  - **Rejected**: Jika terdapat data yang tidak sesuai atau NIM di luar awalan `26`, proses otomatisasi ditolak dengan alasan penolakan yang rinci.
+- **Sistem Antrean Waitlist**: Bagi pengguna yang ditolak secara otomatis oleh mesin OCR, disediakan tombol **"Daftar Antrean Waitlist Manual"** untuk mendaftarkan nama, NIM, dan **Nomor WhatsApp** mereka ke antrean peninjauan manual oleh pengurus angkatan.
+
+### 3. Dashboard Admin Pengurus Angkatan
+Diakses khusus oleh akun berhak akses `admin` (kredensial di bawah). Menampilkan kontrol panel manajemen:
+- **Metrik Statistik**: Total Akun Terdaftar, Verifikasi Pending, Antrean Waitlist, dan Pendaftar yang Disetujui.
+- **Pusat Verifikasi**: Tabel responsif TanStack Table untuk meninjau detail pengunggahan berkas, nomor WhatsApp mahasiswa, dan tombol persetujuan manual (Approve, Waitlist, Reject dengan pop-up input alasan penolakan kustom).
+- **Direktori Mahasiswa**: Direktori akun terdaftar beserta opsi kenaikan/penurunan peran (Role User/Admin).
+- **Pengumuman & Catatan Tugas**: Formulir penerbitan buletin resmi dan daftar tugas kuliah angkatan.
+
+### 4. Coming Soon Modules
+Halaman-halaman berikut diset ke status "Coming Soon" menunggu kalender akademik resmi BAAK:
+- **Jadwal Kuliah Semester 1**: Informasi jadwal kelas, SKS, dosen pengampu, dan nomor ruangan kuliah.
+- **Panduan Ujian BTQ**: Syarat kelulusan Baca Tulis Al-Qur'an (BTQ) LAK UMKT.
+- **Daftar Tugas Kuliah**: Catatan tugas resmi angkatan.
+
+### 5. Komunitas & Informasi Tambahan
+- **Forum Diskusi**: Tempat bertanya seputar koding, info kost, dan masta. Pengguna langsung memposting menggunakan sesi login aktif secara otomatis.
+- **Buletin Berita**: Pengumuman penting tersemat (pinned) dari pengurus angkatan.
+- **Tips Survive Maba**: Tips akademik & sosial asimetris.
+
+---
+
+## 📂 Struktur Folder Proyek
+
+```bash
 IF_UMKT_26/
-├── index.html              # Core SPA Layout & Interface (Sidebar, Bottom Nav, All Pages & Modals)
-├── css/
-│   └── styles.css          # Custom styling, fonts, glassmorphism effects, scrollbar
-├── js/
-│   ├── data.js             # Data master (Jadwal, Masta, BTQ, Tips, Task awal, Forum awal, Berita awal)
-│   ├── storage.js          # LocalStorage CRUD Manager (WA submissions, Tasks, Forum, News, Theme)
-│   ├── calendar.js         # Google Calendar template URL generator & .ics exporter helper
-│   └── app.js              # Alpine.js application controller & state store
-├── .gitignore              # Git ignore safety patterns
-├── .graphifyignore         # Graphify safety patterns
-└── README.md               # Dokumentasi lengkap proyek
+├── .agents/                    # Konfigurasi agen AI & session briefing
+├── graphify-out/               # Basis data grafik pengetahuan kode (AST)
+├── src/
+│   ├── components/
+│   │   ├── layout/             # Sidebar, Header, Toast, MobileBottomNav
+│   │   └── views/              # Halaman Tampilan (Dashboard, Masta, Admin, dsb.)
+│   ├── context/
+│   │   └── AuthContext.tsx     # Session manajemen autentikasi & registrasi
+│   ├── hooks/                  # TanStack Query Hooks (useTasks, useForum, etc.)
+│   ├── services/
+│   │   └── mockApi.ts          # Simulasi database lokal & mesin pemindai OCR
+│   ├── types/
+│   │   └── index.ts            # Type definitions TypeScript
+│   ├── App.tsx                 # Router view & gerbang autentikasi
+│   ├── index.css               # Hallmark CSS tokens & critique stamp
+│   └── main.tsx                # Entry point React
+├── tailwind.config.js          # Konfigurasi palette warna & typography
+├── vite.config.ts              # Konfigurasi bundler Vite
+└── README.md                   # Dokumentasi lengkap proyek
 ```
 
 ---
 
-## 🚀 Cara Menjalankan Project
+## 🚀 Panduan Instalasi & Pengembangan
 
-Project ini dibuat dengan arsitektur **Zero-Build Step** berbasis Tailwind CSS v3 CDN & Alpine.js CDN, sehingga sangat ringan dan dapat langsung dijalankan tanpa perlu instalasi NPM heavy dependencies.
+### Prasyarat
+Pastikan Anda sudah menginstal **Node.js** (versi 18+) di komputer Anda.
 
-### Opsi 1: Menggunakan Web Server Sederhana (Disarankan)
+### Langkah-Langkah Menjalankan Proyek:
 
-Gunakan `npx serve`, Python HTTP server, atau Live Server VS Code di root folder project:
+1. **Clone & Masuk ke Folder Proyek**:
+   ```bash
+   cd IF_UMKT_26
+   ```
 
-#### Menggunakan Node.js / NPX:
-```bash
-npx serve .
-```
-Lalu buka browser di `http://localhost:3000`.
+2. **Instalasi Dependencies**:
+   ```bash
+   npm install
+   ```
 
-#### Menggunakan Python 3:
-```bash
-python -m http.server 8000
-```
-Lalu buka browser di `http://localhost:8000`.
+3. **Jalankan Vite Development Server**:
+   ```bash
+   npm run dev
+   ```
+   Aplikasi akan berjalan secara lokal di browser Anda (biasanya pada `http://localhost:5173` atau port yang ditentukan terminal).
 
-### Opsi 2: Membuka Langsung di Browser
-
-Cukup klik ganda (double-click) file `index.html` atau drag & drop file `index.html` ke browser kesayangan Anda (Google Chrome, Edge, Firefox, Brave, Safari).
-
----
-
-## 🔐 Kredensial Panel Admin (Dummy)
-
-- **URL Portal**: Klik menu **Panel Admin** di Sidebar/Navigation.
-- **Password Dummy**: `admin2026` atau `infotik26`
+4. **Kompilasi Versi Produksi (Production Build)**:
+   ```bash
+   npm run build
+   ```
 
 ---
 
-## 🎨 Palette Warna & Desain
+## 🔑 Kredensial Uji Coba (Testing Accounts)
 
-- **Primary Colors**: Deep Indigo (`#4f46e5`), Purple (`#7c3aed`), & Slate Dark Mode (`#0f172a` / `#020617`).
-- **Accent Colors**: Emerald Green (`#10b981`), Amber Gold (`#f59e0b`), Rose (`#f43f5e`).
-- **Typography**: Plus Jakarta Sans / Inter.
-- **Layout**: Desktop Sidebar Navigation & Mobile Bottom Navigation Bar.
+Untuk mempermudah pengujian alur sistem informasi, gunakan kredensial berikut:
+
+| Akun Peran | NIM / Email | Password | Kegunaan Uji Coba |
+| :--- | :--- | :--- | :--- |
+| **Admin Angkatan** | `admin@infotik.com` | `admin2026` | Masuk ke Panel Admin kontrol untuk menyetujui waitlist / verifikasi WA. |
+| **Mahasiswa Baru** | Mendaftar baru dengan NIM diawali `26...` | Kustom | Menguji pendaftaran akun valid, simulasi OCR, dan pendaftaran Waitlist. |
+| **NIM Tidak Valid** | Mendaftar baru dengan NIM diawali `25...` / `24...` | Kustom | Menguji penolakan otomatisasi sistem registrasi angkatan 2026. |

@@ -1,16 +1,60 @@
+# Production Build Artifacts
 node_modules/
-.venv/
-venv/
 dist/
+dist-electron/
 build/
 out/
-dist-electron/
-coverage/
+bin/
+obj/
+
+# Caching & Package Manager Metadata
+.cache/
+.npm/
+.eslintcache
+.parcel-cache
+.turbo/
 .vite/
 .next/
-.turbo/
-.cache/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Virtual Environments (Python)
+.venv/
+venv/
+ENV/
+env/
+
+# System Files & Temporary Logs
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+*.bak
+*.swp
+*.pid
+crash-reports/
+
+# IDE and Code Editor Settings
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Environment Variables & Secrets
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env*.local
+
+# Graphify Corpus Safety Guardrails & Local Repositories
 graphify-out/
 graphify-obsidian/
-.DS_Store
-*.log
+.agents/skills/archive/
+.agents/rules/*.log
