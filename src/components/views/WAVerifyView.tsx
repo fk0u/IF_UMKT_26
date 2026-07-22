@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, FileUp, Clock, CheckCircle2, XCircle, AlertTriangle, Cpu, ListOrdered } from 'lucide-react';
 import { useWAVerify } from '../../hooks/useWAVerify';
 import { WASubmission } from '../../types';
+import { secureStorage } from '../../utils/secureStorage';
 
 interface WAVerifyViewProps {
   onShowToast: (title: string, msg: string, type?: 'info' | 'success' | 'warning' | 'danger') => void;
@@ -407,7 +408,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
                     <button onClick={() => handleSimulateStatus('Approved')} className="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-bold text-[11px]">Approved ✅</button>
                     <button onClick={() => handleSimulateStatus('Waitlist')} className="px-3 py-1 rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 font-bold text-[11px]">Waitlist ⏳</button>
                     <button onClick={() => {
-                      localStorage.removeItem('infotik_my_wa_submission');
+                      secureStorage.removeItem('infotik_my_wa_submission');
                       window.location.reload();
                     }} className="px-3 py-1 rounded-lg bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-300 font-bold text-[11px]">Reset Form 🔄</button>
                   </div>

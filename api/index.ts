@@ -1,10 +1,25 @@
 /* Hallmark · backend: api/index.ts · genre: full-stack-serverless · theme: Custom Indigo-Midnight */
 import express from 'express';
 import cors from 'cors';
+import crypto from 'crypto';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Global Security Headers Middleware (Startup/Enterprise Grade)
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  next();
+});
+
+// Enterprise Hashing Helper
+export function hashPassword(password: string): string {
+  return crypto.createHmac('sha256', 'infotik26_backend_hash_salt').update(password).digest('hex');
+}
 
 // In-Memory Database State
 const INITIAL_USERS = [
@@ -14,7 +29,7 @@ const INITIAL_USERS = [
     nim: '261110045',
     whatsapp: '081234567890',
     email: 'rian@example.com',
-    password: 'password123',
+    password: hashPassword('password123'),
     role: 'user' as const,
     avatar: 'https://api.dicebear.com/7.x/bottts/svg?seed=Rian'
   },
@@ -24,7 +39,7 @@ const INITIAL_USERS = [
     nim: '261110001',
     whatsapp: '089988776655',
     email: 'admin@example.com',
-    password: 'admin2026password', // Fallback default password
+    password: hashPassword('admin2026password'), // Fallback default password
     role: 'admin' as const,
     avatar: 'https://api.dicebear.com/7.x/identicon/svg?seed=BAAK'
   }
@@ -127,8 +142,9 @@ app.get('/api/health', (req, res) => {
 // AUTH ENDPOINTS
 app.post('/api/auth/login', (req, res) => {
   const { emailOrNim, password } = req.body;
+  const hashedPassword = hashPassword(password);
   const user = dbUsers.find(
-    (u) => (u.email === emailOrNim || u.nim === emailOrNim) && u.password === password
+    (u) => (u.email === emailOrNim || u.nim === emailOrNim) && u.password === hashedPassword
   );
 
   if (!user) {
@@ -164,7 +180,7 @@ app.post('/api/auth/register', (req, res) => {
     nim,
     whatsapp,
     email,
-    password,
+    password: hashPassword(password),
     role: (role === 'admin' ? 'admin' : 'user') as any,
     avatar: `https://api.dicebear.com/7.x/${role === 'admin' ? 'identicon' : 'bottts'}/svg?seed=${encodeURIComponent(name)}`
   };
@@ -186,7 +202,7 @@ app.post('/api/users', (req, res) => {
     nim,
     whatsapp,
     email,
-    password: password || '123456',
+    password: hashPassword(password || '123456'),
     role: role || 'user',
     avatar: `https://api.dicebear.com/7.x/${role === 'admin' ? 'identicon' : 'bottts'}/svg?seed=${encodeURIComponent(name)}`
   };
@@ -198,7 +214,11 @@ app.put('/api/users/:id', (req, res) => {
   const { id } = req.params;
   const idx = dbUsers.findIndex((u) => u.id === id);
   if (idx !== -1) {
-    dbUsers[idx] = { ...dbUsers[idx], ...req.body };
+    const updates = { ...req.body };
+    if (updates.password) {
+      updates.password = hashPassword(updates.password);
+    }
+    dbUsers[idx] = { ...dbUsers[idx], ...updates };
     return res.json(dbUsers[idx]);
   }
   res.status(404).json({ message: 'User tidak ditemukan.' });
@@ -208,6 +228,12 @@ app.delete('/api/users/:id', (req, res) => {
   const { id } = req.params;
   dbUsers = dbUsers.filter((u) => u.id !== id);
   res.json({ success: true });
+});
+
+// SCHEDULES ENDPOINT
+app.get('/api/schedules', (req, res) => {
+  res.setHeader('Cache-Control', 'public, max-age=3600');
+  res.json(INITIAL_SCHEDULES);
 });
 
 // NEWS CRUD

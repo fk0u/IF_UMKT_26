@@ -25,6 +25,8 @@ import { useWAVerify } from './hooks/useWAVerify';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LogIn, UserPlus, Shield, Terminal } from 'lucide-react';
 
+import { secureStorage } from './utils/secureStorage';
+
 const AppContent: React.FC = () => {
   const { currentUser, login, signup } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('dashboard');
@@ -71,16 +73,11 @@ const AppContent: React.FC = () => {
   // Sync user submission state
   useEffect(() => {
     if (!currentUser) return;
-    const savedSub = localStorage.getItem('infotik_my_wa_submission');
-    if (savedSub) {
-      try {
-        const parsed: WASubmission = JSON.parse(savedSub);
-        if (parsed.nim === currentUser.nim) {
-          setUserSubmission(parsed);
-        } else {
-          setUserSubmission(null);
-        }
-      } catch (e) {
+    const parsed = secureStorage.getItem<WASubmission>('infotik_my_wa_submission');
+    if (parsed) {
+      if (parsed.nim === currentUser.nim) {
+        setUserSubmission(parsed);
+      } else {
         setUserSubmission(null);
       }
     } else {

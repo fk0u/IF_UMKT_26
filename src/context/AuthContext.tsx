@@ -1,6 +1,7 @@
 /* Hallmark · context: AuthContext · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: modern-minimal */
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserAccount } from '../types';
+import { secureStorage } from '../utils/secureStorage';
 
 interface AuthContextType {
   currentUser: UserAccount | null;
@@ -37,13 +38,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       })
       .then((data) => {
         setUsers(data);
-        localStorage.setItem('infotik_users', JSON.stringify(data));
+        secureStorage.setItem('infotik_users', data);
       })
       .catch(() => {
-        const savedUsers = localStorage.getItem('infotik_users');
-        if (savedUsers) {
-          let loadedUsers: UserAccount[] = JSON.parse(savedUsers);
-          loadedUsers = loadedUsers.map((u) =>
+        const loadedUsers = secureStorage.getItem<UserAccount[]>('infotik_users');
+        if (loadedUsers) {
+          const mapped = loadedUsers.map((u) =>
             u.id === 'usr-admin'
               ? {
                   ...u,
@@ -52,17 +52,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 }
               : u
           );
-          setUsers(loadedUsers);
+          setUsers(mapped);
         } else {
           const initialUsers = [DEFAULT_ADMIN];
           setUsers(initialUsers);
-          localStorage.setItem('infotik_users', JSON.stringify(initialUsers));
+          secureStorage.setItem('infotik_users', initialUsers);
         }
       });
 
-    const session = localStorage.getItem('infotik_current_user');
+    const session = secureStorage.getItem<UserAccount>('infotik_current_user');
     if (session) {
-      setCurrentUser(JSON.parse(session));
+      setCurrentUser(session);
     }
   }, []);
 
@@ -76,7 +76,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res.ok) {
         const data = await res.json();
         setCurrentUser(data.user);
-        localStorage.setItem('infotik_current_user', JSON.stringify(data.user));
+        secureStorage.setItem('infotik_current_user', data.user);
         return data.user;
       }
       const errData = await res.json();
@@ -94,7 +94,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
 
       setCurrentUser(user);
-      localStorage.setItem('infotik_current_user', JSON.stringify(user));
+      secureStorage.setItem('infotik_current_user', user);
       return user;
     }
   };
@@ -111,7 +111,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (res.ok) {
         const data = await res.json();
         setCurrentUser(data.user);
-        localStorage.setItem('infotik_current_user', JSON.stringify(data.user));
+        secureStorage.setItem('infotik_current_user', data.user);
         return data.user;
       }
       const errData = await res.json();
@@ -140,17 +140,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const updatedList = [...users, newUser];
       setUsers(updatedList);
-      localStorage.setItem('infotik_users', JSON.stringify(updatedList));
+      secureStorage.setItem('infotik_users', updatedList);
 
       setCurrentUser(newUser);
-      localStorage.setItem('infotik_current_user', JSON.stringify(newUser));
+      secureStorage.setItem('infotik_current_user', newUser);
       return newUser;
     }
   };
 
   const logout = () => {
     setCurrentUser(null);
-    localStorage.removeItem('infotik_current_user');
+    secureStorage.removeItem('infotik_current_user');
   };
 
   const updateUserRole = (userId: string, role: UserAccount['role']) => {
@@ -162,12 +162,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const updated = users.map((u) => (u.id === userId ? { ...u, role } : u));
     setUsers(updated);
-    localStorage.setItem('infotik_users', JSON.stringify(updated));
+    secureStorage.setItem('infotik_users', updated);
 
     if (currentUser && currentUser.id === userId) {
       const updatedUser = { ...currentUser, role };
       setCurrentUser(updatedUser);
-      localStorage.setItem('infotik_current_user', JSON.stringify(updatedUser));
+      secureStorage.setItem('infotik_current_user', updatedUser);
     }
   };
 

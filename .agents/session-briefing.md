@@ -4,6 +4,9 @@
 Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOTIK 26) berbasis **React + TypeScript + Vite + Node.js Express (Full-Stack Hybrid) + iOS SwiftUI & Android Jetpack Compose Companion Apps** dengan **Hallmark Anti-AI-Slop Redesign**.
 
 ## Current Status
+- ✅ **Konfigurasi Proyek & SDK Mobile Ready**:
+  - **Android**: Berkas `settings.gradle.kts`, `build.gradle.kts`, `app/build.gradle.kts`, dan `AndroidManifest.xml` (lengkap dengan konfigurasi izin Internet & Cleartext HTTP) telah ditambahkan sehingga proyek android/ dapat dibuka dan dijalankan langsung dari Android Studio.
+  - **iOS**: Dokumen panduan `ios/README.md` ditambahkan untuk mempermudah impor berkas Swift ke proyek Xcode baru.
 - ✅ **Aplikasi Mobile Android Pendamping (Kotlin & Jetpack Compose)**:
   - Berkas baru di bawah [android/app/src/main/java/com/infotik26/app/](file:///d:/Project/IF_UMKT_26/android/app/src/main/java/com/infotik26/app/) berisi proyek Android Kotlin lengkap.
   - Mengimplementasikan navigasi bottom bar material 3 (Buletin, Jadwal, Forum, Tugas, Profil).
@@ -23,11 +26,11 @@ Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOT
 - ✅ **Arsitektur Hibrida Frontend & Client Fallback**:
   - [mockApi.ts](file:///d:/Project/IF_UMKT_26/src/services/mockApi.ts) dan [AuthContext.tsx](file:///d:/Project/IF_UMKT_26/src/context/AuthContext.tsx) ditingkatkan agar melakukan panggilan fetch API ke backend, dengan fallback otomatis ke `localStorage` jika backend sedang offline/tidak dapat diakses.
 - ✅ Successful production build (`npm run build`).
-- ✅ Updated Graphify Knowledge Graph (2819 nodes, 3327 edges, 242 communities).
+- ✅ Updated Graphify Knowledge Graph (2834 nodes, 3336 edges, 252 communities).
 
 ## Key Files & Structure
-- [android/app/](file:///d:/Project/IF_UMKT_26/android/app/) - Jetpack Compose native Android client application
-- [ios/Infotik26/](file:///d:/Project/IF_UMKT_26/ios/Infotik26/) - SwiftUI native iOS client application
+- [android/](file:///d:/Project/IF_UMKT_26/android/) - Android Studio Gradle project
+- [ios/](file:///d:/Project/IF_UMKT_26/ios/) - iOS Swift SwiftUI project
 - [api/index.ts](file:///d:/Project/IF_UMKT_26/api/index.ts) - Node.js Express backend server
 - [vercel.json](file:///d:/Project/IF_UMKT_26/vercel.json) - Vercel deployment configuration
 - [src/services/mockApi.ts](file:///d:/Project/IF_UMKT_26/src/services/mockApi.ts) - Hybrid API gateway & fallbacks

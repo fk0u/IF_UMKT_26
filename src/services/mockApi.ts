@@ -1,5 +1,6 @@
 /* Hallmark · service: mockApi · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: full-stack-hybrid · theme: Custom Indigo-Midnight */
 import { ScheduleItem, TaskItem, NewsItem, ForumThread, WASubmission, MastaData, BTQData, AcademicTip, UserAccount } from '../types';
+import { secureStorage } from '../utils/secureStorage';
 
 const INITIAL_SCHEDULES: ScheduleItem[] = [
   { id: 'sch-1', day: 'Senin', dayCode: 1, time: '07:30 - 09:10 WITA', startTime: '07:30', endTime: '09:10', course: 'Pancasila', lecturer: 'Drs. H. Ahmad Dahlan, M.Pd.', room: 'GF-3.02', building: 'Gedung Utama Lt. 3', sks: 2, badge: 'Teori', color: 'from-blue-600 to-indigo-600' },
@@ -158,8 +159,8 @@ export const mockApi = {
   async getTasks(): Promise<TaskItem[]> {
     return fetchOrFallback<TaskItem[]>('/api/tasks', {}, async () => {
       await delay(200);
-      const data = localStorage.getItem('infotik_tasks');
-      return data ? JSON.parse(data) : INITIAL_TASKS;
+      const data = secureStorage.getItem<TaskItem[]>('infotik_tasks');
+      return data || INITIAL_TASKS;
     });
   },
 
@@ -177,7 +178,7 @@ export const mockApi = {
         ...newTask
       };
       tasks.unshift(item);
-      localStorage.setItem('infotik_tasks', JSON.stringify(tasks));
+      secureStorage.setItem('infotik_tasks', tasks);
       return item;
     });
   },
@@ -191,7 +192,7 @@ export const mockApi = {
       await delay(200);
       const tasks = await this.getTasks();
       const updated = tasks.map(t => t.id === taskId ? { ...t, status } : t);
-      localStorage.setItem('infotik_tasks', JSON.stringify(updated));
+      secureStorage.setItem('infotik_tasks', updated);
       return updated;
     });
   },
@@ -203,7 +204,7 @@ export const mockApi = {
       await delay(200);
       const tasks = await this.getTasks();
       const filtered = tasks.filter(t => t.id !== taskId);
-      localStorage.setItem('infotik_tasks', JSON.stringify(filtered));
+      secureStorage.setItem('infotik_tasks', filtered);
       return filtered;
     });
   },
@@ -212,8 +213,8 @@ export const mockApi = {
   async getNews(): Promise<NewsItem[]> {
     return fetchOrFallback<NewsItem[]>('/api/news', {}, async () => {
       await delay(200);
-      const data = localStorage.getItem('infotik_news');
-      return data ? JSON.parse(data) : INITIAL_NEWS;
+      const data = secureStorage.getItem<NewsItem[]>('infotik_news');
+      return data || INITIAL_NEWS;
     });
   },
 
@@ -232,7 +233,7 @@ export const mockApi = {
         ...newNews
       };
       list.unshift(item);
-      localStorage.setItem('infotik_news', JSON.stringify(list));
+      secureStorage.setItem('infotik_news', list);
       return item;
     });
   },
@@ -244,7 +245,7 @@ export const mockApi = {
       await delay(200);
       const list = await this.getNews();
       const filtered = list.filter(n => n.id !== newsId);
-      localStorage.setItem('infotik_news', JSON.stringify(filtered));
+      secureStorage.setItem('infotik_news', filtered);
       return filtered;
     });
   },
@@ -253,8 +254,8 @@ export const mockApi = {
   async getForum(): Promise<ForumThread[]> {
     return fetchOrFallback<ForumThread[]>('/api/forum', {}, async () => {
       await delay(200);
-      const data = localStorage.getItem('infotik_forum');
-      return data ? JSON.parse(data) : INITIAL_FORUM;
+      const data = secureStorage.getItem<ForumThread[]>('infotik_forum');
+      return data || INITIAL_FORUM;
     });
   },
 
@@ -279,7 +280,7 @@ export const mockApi = {
         replies: []
       };
       forum.unshift(thread);
-      localStorage.setItem('infotik_forum', JSON.stringify(forum));
+      secureStorage.setItem('infotik_forum', forum);
       return thread;
     });
   },
@@ -291,7 +292,7 @@ export const mockApi = {
       await delay(150);
       const forum = await this.getForum();
       const updated = forum.map(f => f.id === threadId ? { ...f, upvotes: f.upvotes + 1 } : f);
-      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      secureStorage.setItem('infotik_forum', updated);
       return updated;
     });
   },
@@ -321,7 +322,7 @@ export const mockApi = {
         }
         return f;
       });
-      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      secureStorage.setItem('infotik_forum', updated);
       return updated;
     });
   },
@@ -330,8 +331,8 @@ export const mockApi = {
   async getWASubmissions(): Promise<WASubmission[]> {
     return fetchOrFallback<WASubmission[]>('/api/wa-submissions', {}, async () => {
       await delay(200);
-      const data = localStorage.getItem('infotik_wa_submissions');
-      return data ? JSON.parse(data) : [];
+      const data = secureStorage.getItem<WASubmission[]>('infotik_wa_submissions');
+      return data || [];
     });
   },
 
@@ -409,8 +410,8 @@ export const mockApi = {
       const filtered = submissions.filter(s => s.nim !== formData.nim);
       filtered.unshift(submission);
 
-      localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
-      localStorage.setItem('infotik_my_wa_submission', JSON.stringify(submission));
+      secureStorage.setItem('infotik_wa_submissions', filtered);
+      secureStorage.setItem('infotik_my_wa_submission', submission);
       return submission;
     });
   },
@@ -424,15 +425,14 @@ export const mockApi = {
       await delay(200);
       const submissions = await this.getWASubmissions();
       const updated = submissions.map(s => s.id === ticketId ? { ...s, status, rejectionReason: rejectionReason || s.rejectionReason } : s);
-      localStorage.setItem('infotik_wa_submissions', JSON.stringify(updated));
+      secureStorage.setItem('infotik_wa_submissions', updated);
 
-      const mySub = localStorage.getItem('infotik_my_wa_submission');
+      const mySub = secureStorage.getItem<WASubmission>('infotik_my_wa_submission');
       if (mySub) {
-        const parsed: WASubmission = JSON.parse(mySub);
-        if (parsed.id === ticketId) {
-          parsed.status = status;
-          if (rejectionReason) parsed.rejectionReason = rejectionReason;
-          localStorage.setItem('infotik_my_wa_submission', JSON.stringify(parsed));
+        if (mySub.id === ticketId) {
+          mySub.status = status;
+          if (rejectionReason) mySub.rejectionReason = rejectionReason;
+          secureStorage.setItem('infotik_my_wa_submission', mySub);
         }
       }
       return updated;
@@ -447,15 +447,15 @@ export const mockApi = {
       body: JSON.stringify(user)
     }, async () => {
       await delay(300);
-      const data = localStorage.getItem('infotik_users');
-      const list: UserAccount[] = data ? JSON.parse(data) : [];
+      const data = secureStorage.getItem<UserAccount[]>('infotik_users');
+      const list: UserAccount[] = data || [];
       const newUser: UserAccount = {
         ...user,
         id: 'usr-' + Date.now(),
         avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.name)}`
       };
       list.push(newUser);
-      localStorage.setItem('infotik_users', JSON.stringify(list));
+      secureStorage.setItem('infotik_users', list);
       return newUser;
     });
   },
@@ -467,10 +467,10 @@ export const mockApi = {
       body: JSON.stringify(fields)
     }, async () => {
       await delay(200);
-      const data = localStorage.getItem('infotik_users');
-      const list: UserAccount[] = data ? JSON.parse(data) : [];
+      const data = secureStorage.getItem<UserAccount[]>('infotik_users');
+      const list: UserAccount[] = data || [];
       const updated = list.map(u => u.id === userId ? { ...u, ...fields } : u);
-      localStorage.setItem('infotik_users', JSON.stringify(updated));
+      secureStorage.setItem('infotik_users', updated);
       return updated;
     });
   },
@@ -480,10 +480,10 @@ export const mockApi = {
       method: 'DELETE'
     }, async () => {
       await delay(200);
-      const data = localStorage.getItem('infotik_users');
-      const list: UserAccount[] = data ? JSON.parse(data) : [];
+      const data = secureStorage.getItem<UserAccount[]>('infotik_users');
+      const list: UserAccount[] = data || [];
       const filtered = list.filter(u => u.id !== userId);
-      localStorage.setItem('infotik_users', JSON.stringify(filtered));
+      secureStorage.setItem('infotik_users', filtered);
       return filtered;
     });
   },
@@ -498,7 +498,7 @@ export const mockApi = {
       await delay(200);
       const list = await this.getForum();
       const updated = list.map(t => t.id === threadId ? { ...t, ...fields } : t);
-      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      secureStorage.setItem('infotik_forum', updated);
       return updated;
     });
   },
@@ -510,7 +510,7 @@ export const mockApi = {
       await delay(200);
       const list = await this.getForum();
       const filtered = list.filter(t => t.id !== threadId);
-      localStorage.setItem('infotik_forum', JSON.stringify(filtered));
+      secureStorage.setItem('infotik_forum', filtered);
       return filtered;
     });
   },
@@ -529,7 +529,7 @@ export const mockApi = {
         }
         return t;
       });
-      localStorage.setItem('infotik_forum', JSON.stringify(updated));
+      secureStorage.setItem('infotik_forum', updated);
       return updated;
     });
   },
@@ -544,7 +544,7 @@ export const mockApi = {
       await delay(200);
       const list = await this.getNews();
       const updated = list.map(n => n.id === newsId ? { ...n, ...fields } : n);
-      localStorage.setItem('infotik_news', JSON.stringify(updated));
+      secureStorage.setItem('infotik_news', updated);
       return updated;
     });
   },
@@ -559,7 +559,7 @@ export const mockApi = {
       await delay(200);
       const list = await this.getTasks();
       const updated = list.map(t => t.id === taskId ? { ...t, ...fields } : t);
-      localStorage.setItem('infotik_tasks', JSON.stringify(updated));
+      secureStorage.setItem('infotik_tasks', updated);
       return updated;
     });
   },
@@ -571,7 +571,7 @@ export const mockApi = {
       await delay(200);
       const list = await this.getWASubmissions();
       const filtered = list.filter(s => s.id !== ticketId);
-      localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
+      secureStorage.setItem('infotik_wa_submissions', filtered);
       return filtered;
     });
   }
