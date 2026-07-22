@@ -1,31 +1,26 @@
 # Session Briefing - INFOTIK 26 (Pusat Informasi Mahasiswa TI 2026 UMKT)
 
 ## Project Overview
-Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOTIK 26) berbasis **React + TypeScript + Vite + TanStack Query + TanStack Table** dengan **Hallmark Anti-AI-Slop Redesign**.
+Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOTIK 26) berbasis **React + TypeScript + Vite + Node.js Express (Full-Stack Hybrid) + TanStack Query + TanStack Table** dengan **Hallmark Anti-AI-Slop Redesign**.
 
 ## Current Status
-- ✅ **Halaman Detail Konten Terdedikasi**:
-  - [ForumDetailView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/ForumDetailView.tsx) untuk membaca penuh satu diskusi forum, melihat balasan terstruktur, dan mengirim komentar baru.
-  - [NewsDetailView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/NewsDetailView.tsx) untuk menampilkan berita pengumuman resmi angkatan secara editorial komprehensif.
-- ✅ **Moderasi Forum Langsung (Inline Moderation)**:
-  - Admin yang sedang melihat detail utas diskusi dapat langsung melakukan moderasi di halaman tersebut: mengedit judul/kategori/konten secara inline, menghapus utas, dan menghapus komentar mahasiswa.
-- ✅ **Sistem ERP CRUD Administrator Penuh (Discord-Like)**:
-  - **Kelola Mahasiswa**: Tambah manual mahasiswa, edit data profil & peran (User/Admin), serta hapus akun mahasiswa.
-  - **Verifikasi WA**: Reset atau hapus berkas pendaftaran verifikasi WA.
-  - **Kelola Buletin & Tugas**: Edit data judul/isi pengumuman/tugas yang sudah diposting dan hapus data.
-  - **Moderasi Forum**: Edit/ubah isi postingan forum milik mahasiswa lain, menghapus thread, atau menghapus komentar balasan yang melanggar aturan.
-- ✅ **Sistem Login & Register (Authentication)**:
-  - Form gerbang masuk & daftar akun terintegrasi.
-  - Mahasiswa baru daftar dengan input Nama, NIM (awalan `26` divalidasi), WhatsApp, Email, dan Password.
-  - Registrasi Admin mendukung input kode undangan dari berkas lingkungan (.env).
-- ✅ **Penyensoran Kredensial & Berkas `.env`**:
-  - Semua informasi sensitif (Password Admin, Kode Undangan, Link WA) dipindahkan dari *hardcoded* kode sumber ke berkas konfigurasi lokal `.env` (di-ignore oleh git).
+- ✅ **Backend API Server (Node.js Express)**:
+  - Berkas baru [api/index.ts](file:///d:/Project/IF_UMKT_26/api/index.ts) yang mengimplementasikan REST API lengkap untuk mengelola mahasiswa (CRUD), berita, tugas, diskusi forum, dan verifikasi WA (dengan OCR simulation).
+  - Ekspor Express app kompatibel dengan model Vercel Serverless Functions.
+- ✅ **Konfigurasi Deployment Vercel**:
+  - Berkas baru [vercel.json](file:///d:/Project/IF_UMKT_26/vercel.json) ditambahkan untuk merutekan permintaan `/api/*` ke backend serverless functions, dan permintaan halaman statis/Aset lainnya ke Vite SPA.
+- ✅ **Proxy Lokal (Development)**:
+  - Konfigurasi [vite.config.ts](file:///d:/Project/IF_UMKT_26/vite.config.ts) ditambahkan proxy `/api` ke port `3001` (backend).
+  - Skrip baru `"dev:all"` menggunakan `concurrently` untuk memutar server frontend & backend sekaligus secara lokal.
+- ✅ **Arsitektur Hibrida Frontend & Client Fallback**:
+  - [mockApi.ts](file:///d:/Project/IF_UMKT_26/src/services/mockApi.ts) dan [AuthContext.tsx](file:///d:/Project/IF_UMKT_26/src/context/AuthContext.tsx) ditingkatkan agar melakukan panggilan fetch API ke backend, dengan fallback otomatis ke `localStorage` jika backend sedang offline/tidak dapat diakses.
 - ✅ Successful production build (`npm run build`).
-- ✅ Updated Graphify Knowledge Graph (2624 nodes, 3038 edges, 219 communities).
+- ✅ Updated Graphify Knowledge Graph (2660 nodes, 3071 edges, 235 communities).
 
 ## Key Files & Structure
-- [src/components/views/ForumDetailView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/ForumDetailView.tsx) - Tampilan detail forum dengan inline moderation
-- [src/components/views/NewsDetailView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/NewsDetailView.tsx) - Tampilan detail buletin berita
-- [src/components/views/AdminView.tsx](file:///d:/Project/IF_UMKT_26/src/components/views/AdminView.tsx) - Kontrol panel ERP CRUD Administrator
-- [src/services/mockApi.ts](file:///d:/Project/IF_UMKT_26/src/services/mockApi.ts) - CRUD logic mock & local storage sync
-- [src/App.tsx](file:///d:/Project/IF_UMKT_26/src/App.tsx) - Router view & gerbang autentikasi
+- [api/index.ts](file:///d:/Project/IF_UMKT_26/api/index.ts) - Node.js Express backend server
+- [vercel.json](file:///d:/Project/IF_UMKT_26/vercel.json) - Vercel deployment configuration
+- [src/services/mockApi.ts](file:///d:/Project/IF_UMKT_26/src/services/mockApi.ts) - Hybrid API gateway & fallbacks
+- [src/context/AuthContext.tsx](file:///d:/Project/IF_UMKT_26/src/context/AuthContext.tsx) - Auth gateway with backend integrations
+- [vite.config.ts](file:///d:/Project/IF_UMKT_26/vite.config.ts) - Vite configuration with Port 3002 and Proxy 3001
+- [package.json](file:///d:/Project/IF_UMKT_26/package.json) - Dependencies & Scripts
