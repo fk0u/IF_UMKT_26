@@ -1,3 +1,4 @@
+/* Hallmark · component: ScheduleView · macrostructure: Workbench-Bento Hybrid · genre: modern-minimal · theme: Custom Indigo-Midnight */
 import React, { useState, useMemo } from 'react';
 import {
   useReactTable,
@@ -22,13 +23,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
   const [selectedDay, setSelectedDay] = useState<string>('Semua');
   const [sorting, setSorting] = useState<SortingState>([{ id: 'dayCode', desc: false }]);
 
-  // Filtered schedules data based on day tab
   const filteredData = useMemo(() => {
     if (selectedDay === 'Semua') return schedules;
     return schedules.filter((s) => s.day === selectedDay);
   }, [schedules, selectedDay]);
 
-  // TanStack Table Column Definitions
   const columns = useMemo<ColumnDef<ScheduleItem>[]>(
     () => [
       {
@@ -42,14 +41,11 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
             <ArrowUpDown className="w-3.5 h-3.5" />
           </button>
         ),
-        cell: (info) => {
-          const item = info.row.original;
-          return (
-            <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-extrabold bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
-              {item.day}
-            </span>
-          );
-        },
+        cell: (info) => (
+          <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-mono-tag font-bold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white">
+            {info.getValue() as string}
+          </span>
+        ),
       },
       {
         accessorKey: 'course',
@@ -76,7 +72,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
         accessorKey: 'time',
         header: 'Waktu (WITA)',
         cell: (info) => (
-          <div className="flex items-center text-xs text-slate-700 dark:text-slate-300 font-semibold">
+          <div className="flex items-center text-xs font-mono-tag font-medium text-slate-700 dark:text-slate-300">
             <Clock className="w-3.5 h-3.5 text-brand-500 mr-1.5 shrink-0" />
             <span>{info.getValue() as string}</span>
           </div>
@@ -84,14 +80,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
       },
       {
         accessorKey: 'room',
-        header: 'Ruangan & Gedung',
+        header: 'Ruangan',
         cell: (info) => {
           const item = info.row.original;
           return (
             <div className="flex items-center text-xs text-slate-700 dark:text-slate-300">
               <MapPin className="w-3.5 h-3.5 text-rose-500 mr-1.5 shrink-0" />
               <span>
-                Ruang <strong className="font-bold text-slate-900 dark:text-white">{item.room}</strong> ({item.building})
+                <strong className="font-bold font-mono-tag text-slate-900 dark:text-white">{item.room}</strong> ({item.building})
               </span>
             </div>
           );
@@ -101,7 +97,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
         accessorKey: 'sks',
         header: 'SKS',
         cell: (info) => (
-          <div className="flex items-center text-xs text-slate-700 dark:text-slate-300 font-bold">
+          <div className="flex items-center text-xs font-mono-tag font-bold text-slate-700 dark:text-slate-300">
             <Award className="w-3.5 h-3.5 text-amber-500 mr-1 shrink-0" />
             <span>{info.getValue() as number} SKS</span>
           </div>
@@ -109,7 +105,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
       },
       {
         id: 'actions',
-        header: 'Aksi Ekspor',
+        header: 'Ekspor',
         cell: (info) => {
           const item = info.row.original;
           return (
@@ -120,10 +116,10 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
                   window.open(url, '_blank');
                   onShowToast('Google Calendar', `Membuka Google Calendar untuk ${item.course}`, 'success');
                 }}
-                className="py-1.5 px-2.5 rounded-xl bg-brand-50 hover:bg-brand-100 dark:bg-brand-950/60 dark:hover:bg-brand-900/60 text-brand-600 dark:text-brand-300 font-bold text-xs flex items-center space-x-1 transition"
+                className="py-1.5 px-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-900 dark:text-white font-bold text-xs flex items-center space-x-1 transition"
                 title="Tambah ke Google Calendar"
               >
-                <CalendarPlus className="w-3.5 h-3.5" />
+                <CalendarPlus className="w-3.5 h-3.5 text-brand-500" />
                 <span>Google Cal</span>
               </button>
               <button
@@ -131,7 +127,7 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
                   calendarService.downloadIcsFile(item);
                   onShowToast('Ekspor Calendar', `File .ics untuk ${item.course} berhasil di-download!`, 'success');
                 }}
-                className="py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 font-semibold text-xs transition"
+                className="py-1.5 px-2 rounded-xl border border-slate-200 dark:border-slate-800 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-600 dark:text-slate-300 transition"
                 title="Download file .ics untuk Apple/Outlook"
               >
                 <Download className="w-3.5 h-3.5" />
@@ -144,7 +140,6 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
     [onShowToast]
   );
 
-  // TanStack Table Instance
   const table = useReactTable({
     data: filteredData,
     columns,
@@ -161,19 +156,19 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
         <div>
           <h2 className="text-2xl font-extrabold tracking-tight">Jadwal Kuliah Semester 1 (TanStack Table)</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-            Tabel jadwal interaktif didukung oleh <strong className="text-brand-500">TanStack Table</strong> & TanStack Query.
+            Data jadwal presisi kelas GF-3.02, GF-3.04, & Lab Komputer GF-1.02 UMKT.
           </p>
         </div>
 
         {/* Day Filter Tabs */}
-        <div className="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-800 rounded-xl overflow-x-auto no-scrollbar">
+        <div className="flex items-center space-x-1 p-1 bg-slate-200/80 dark:bg-slate-900 rounded-xl overflow-x-auto no-scrollbar border border-slate-300/40 dark:border-slate-800/60">
           {['Semua', 'Senin', 'Selasa', 'Rabu', 'Sabtu'].map((day) => (
             <button
               key={day}
               onClick={() => setSelectedDay(day)}
               className={`px-3.5 py-1.5 rounded-lg text-xs transition ${
                 selectedDay === day
-                  ? 'bg-brand-600 text-white font-bold shadow'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-950 font-bold shadow-sm'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
               }`}
             >
@@ -184,19 +179,19 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12 glass-card rounded-3xl border">
+        <div className="text-center py-12 hm-card rounded-3xl">
           <div className="inline-block w-8 h-8 border-4 border-brand-500 border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-xs text-slate-500 mt-3 font-medium">Memuat jadwal via TanStack Query...</p>
+          <p className="text-xs text-slate-500 mt-3 font-medium">Memuat data jadwal...</p>
         </div>
       ) : (
         <>
-          {/* Desktop & Tablet Table powered by TanStack Table */}
-          <div className="hidden sm:block glass-card rounded-3xl border overflow-hidden shadow-xl">
+          {/* Desktop Table */}
+          <div className="hidden sm:block hm-card rounded-3xl overflow-hidden shadow-hallmark-md">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">
                 <thead>
                   {table.getHeaderGroups().map((headerGroup) => (
-                    <tr key={headerGroup.id} className="bg-slate-100/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200">
+                    <tr key={headerGroup.id} className="bg-slate-100/90 dark:bg-slate-900/90 border-b border-slate-200/80 dark:border-slate-800/80 text-xs font-bold text-slate-700 dark:text-slate-200">
                       {headerGroup.headers.map((header) => (
                         <th key={header.id} className="px-5 py-3.5">
                           {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
@@ -220,19 +215,19 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
             </div>
           </div>
 
-          {/* Mobile Card Fallback */}
+          {/* Mobile Fallback Cards */}
           <div className="grid grid-cols-1 sm:hidden gap-4">
             {filteredData.map((item) => (
-              <div key={item.id} className="glass-card p-5 rounded-2xl border space-y-3">
+              <div key={item.id} className="hm-card p-5 rounded-2xl space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-brand-100 text-brand-700 dark:bg-brand-900/60 dark:text-brand-300">
+                  <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-mono-tag">
                     {item.day}
                   </span>
-                  <span className="text-[10px] font-bold text-slate-400">{item.sks} SKS</span>
+                  <span className="text-[10px] font-bold text-slate-400 font-mono-tag">{item.sks} SKS</span>
                 </div>
                 <h4 className="font-extrabold text-sm text-slate-900 dark:text-white">{item.course}</h4>
                 <p className="text-xs text-slate-500 dark:text-slate-400">{item.lecturer}</p>
-                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-xs text-slate-600 dark:text-slate-300">
+                <div className="pt-2 border-t border-slate-100 dark:border-slate-800 space-y-1.5 text-xs text-slate-600 dark:text-slate-300 font-mono-tag">
                   <p>⏰ {item.time}</p>
                   <p>📍 Ruang {item.room} ({item.building})</p>
                 </div>
@@ -242,14 +237,14 @@ export const ScheduleView: React.FC<ScheduleViewProps> = ({ onShowToast }) => {
                       const url = calendarService.generateGoogleCalendarUrl(item);
                       window.open(url, '_blank');
                     }}
-                    className="flex-1 py-2 rounded-xl bg-brand-50 font-bold text-xs text-brand-600 dark:bg-brand-950/60 dark:text-brand-300 flex items-center justify-center space-x-1"
+                    className="flex-1 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 font-bold text-xs text-slate-900 dark:text-white flex items-center justify-center space-x-1"
                   >
-                    <CalendarPlus className="w-3.5 h-3.5" />
+                    <CalendarPlus className="w-3.5 h-3.5 text-brand-500" />
                     <span>Google Cal</span>
                   </button>
                   <button
                     onClick={() => calendarService.downloadIcsFile(item)}
-                    className="p-2 rounded-xl border border-slate-200 text-slate-600 dark:text-slate-300"
+                    className="p-2 rounded-xl border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300"
                   >
                     <Download className="w-4 h-4" />
                   </button>

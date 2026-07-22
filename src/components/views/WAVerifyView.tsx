@@ -1,3 +1,4 @@
+/* Hallmark · component: WAVerifyView · genre: modern-minimal · theme: Custom Indigo-Midnight */
 import React, { useState } from 'react';
 import { MessageCircle, FileUp, Clock, CheckCircle2, XCircle } from 'lucide-react';
 import { useWAVerify } from '../../hooks/useWAVerify';
@@ -61,16 +62,16 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
     <div className="space-y-6">
       <div className="max-w-2xl mx-auto space-y-6">
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
-            <MessageCircle className="w-8 h-8" />
+          <div className="w-12 h-12 rounded-2xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-hallmark-md">
+            <MessageCircle className="w-6 h-6" />
           </div>
           <h2 className="text-2xl font-extrabold tracking-tight">Verifikasi Akses Grup WhatsApp Official</h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 max-w-lg mx-auto">
-            Untuk mencegah akun palsu/penipuan, setiap Mahasiswa Baru TI 2026 wajib melakukan verifikasi Surat Lolos Seleksi (SIM-PMB UMKT).
+            Grup WhatsApp resmi diproteksi dengan verifikasi Surat Lolos Seleksi SIM-PMB UMKT untuk mencegah akun palsu/penipuan.
           </p>
         </div>
 
-        <div className="glass-card p-6 sm:p-8 rounded-3xl border space-y-6 shadow-xl">
+        <div className="hm-card p-6 sm:p-8 rounded-3xl space-y-6 shadow-hallmark-md">
           {!userSubmission ? (
             <div className="space-y-5">
               <div className="space-y-1.5">
@@ -80,7 +81,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
                   placeholder="Contoh: Muhammad Fajar Pratama"
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-emerald-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 focus:border-emerald-500 focus:outline-none"
                 />
               </div>
 
@@ -91,7 +92,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
                   value={form.nim}
                   onChange={(e) => setForm({ ...form, nim: e.target.value })}
                   placeholder="Contoh: 261110001"
-                  className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100 dark:bg-slate-800 border border-transparent focus:border-emerald-500 focus:outline-none"
+                  className="w-full px-4 py-2.5 text-xs font-mono-tag rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/80 dark:border-slate-800/80 focus:border-emerald-500 focus:outline-none"
                 />
               </div>
 
@@ -108,7 +109,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
                   <p className="text-xs font-semibold text-slate-700 dark:text-slate-200">
                     {form.fileName ? form.fileName : 'Klik atau seret file Surat Lolos Seleksi (PDF) ke sini'}
                   </p>
-                  <p className="text-[11px] text-slate-400">
+                  <p className="text-[11px] font-mono-tag text-slate-400">
                     {form.fileSize ? `Ukuran: ${form.fileSize}` : 'Ukuran maksimal 5MB (Format PDF)'}
                   </p>
                 </div>
@@ -117,15 +118,15 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
               <button
                 onClick={handleSubmit}
                 disabled={submitWAVerificationMutation.isPending}
-                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 flex items-center justify-center space-x-2 transition disabled:opacity-50"
+                className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md flex items-center justify-center space-x-2 transition disabled:opacity-50"
               >
-                <span>{submitWAVerificationMutation.isPending ? 'Mengunggah via TanStack Mutation...' : 'Kirim Data Verifikasi'}</span>
+                <span>{submitWAVerificationMutation.isPending ? 'Mengunggah & Memproses...' : 'Kirim Data Verifikasi'}</span>
               </button>
             </div>
           ) : (
             <div className="space-y-6 text-center py-4">
               <div
-                className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto shadow-lg ${
+                className={`w-14 h-14 rounded-full flex items-center justify-center mx-auto shadow-md ${
                   userSubmission.status === 'Approved'
                     ? 'bg-emerald-500/20 text-emerald-500 border border-emerald-500/40'
                     : userSubmission.status === 'Rejected'
@@ -172,7 +173,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
                 </p>
               </div>
 
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border text-left text-xs space-y-1 max-w-md mx-auto">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800/80 text-left text-xs space-y-1 max-w-md mx-auto font-mono-tag">
                 <p><strong>Kode Tiket:</strong> {userSubmission.id}</p>
                 <p><strong>Nama:</strong> {userSubmission.name}</p>
                 <p><strong>NIM:</strong> {userSubmission.nim}</p>
@@ -184,7 +185,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
                   href={userSubmission.waLink}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-lg shadow-emerald-600/30 transition"
+                  className="inline-flex items-center space-x-2 px-6 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs shadow-md transition"
                 >
                   <MessageCircle className="w-4 h-4" />
                   <span>Masuk Grup WhatsApp Official Sekarang</span>
@@ -193,7 +194,7 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
 
               {/* Simulation buttons */}
               <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
-                <p className="text-[11px] text-slate-400 mb-2">Simulasi Status Cepat (TanStack Mutation Test):</p>
+                <p className="text-[11px] text-slate-400 mb-2">Simulasi Status Cepat (Testing):</p>
                 <div className="flex justify-center space-x-2">
                   <button onClick={() => handleSimulateStatus('Approved')} className="px-3 py-1 rounded-lg bg-emerald-100 text-emerald-700 dark:bg-emerald-900/50 dark:text-emerald-300 font-bold text-[11px]">Approved ✅</button>
                   <button onClick={() => handleSimulateStatus('Pending')} className="px-3 py-1 rounded-lg bg-amber-100 text-amber-700 dark:bg-amber-900/50 dark:text-amber-300 font-bold text-[11px]">Pending ⏳</button>
