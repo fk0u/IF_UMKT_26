@@ -336,62 +336,63 @@ export const mockApi = {
     });
   },
 
+  /**
+   * Submit WA group verification with real OCR result.
+   * ocrSuccess: boolean from real engine (not simulated fields)
+   */
   async submitWAGroupVerification(formData: { 
     name: string; 
     nim: string; 
     whatsapp: string; 
     fileName: string; 
     fileSize: string;
-    ocrSimulateSuccess?: boolean;
-    ocrData?: {
-      namaSurat?: string;
-      nimSurat?: string;
-      prodiSurat?: string;
-      tanggalSurat?: string;
-    }
+    ocrSuccess: boolean;
+    ocrChecks?: {
+      nameMatches: boolean;
+      nimMatches: boolean;
+      prodiMatches: boolean;
+      yearMatches: boolean;
+    };
   }): Promise<WASubmission> {
+    // Try real backend first
+    const backendPayload = {
+      name: formData.name,
+      nim: formData.nim,
+      whatsapp: formData.whatsapp,
+      fileName: formData.fileName,
+      fileSize: formData.fileSize,
+      ocrSuccess: formData.ocrSuccess
+    };
     return fetchOrFallback<WASubmission>('/api/wa-submissions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(backendPayload)
     }, async () => {
-      await delay(1000); // simulated processing delay
+      // localStorage fallback when backend is unavailable
+      await delay(1000);
       const submissions = await this.getWASubmissions();
       const ticketId = 'WA26-' + Math.floor(100000 + Math.random() * 900000);
 
-      // 1. Check NIM prefix
       const isAngkatan2026 = formData.nim.trim().startsWith('26');
       let status: WASubmission['status'] = 'Pending';
       let rejectionReason = '';
 
-      if (!isAngkatan25OrOther(formData.nim) && !isAngkatan2026) {
+      if (!isAngkatan2026) {
         status = 'Rejected';
         const year = formData.nim.trim().substring(0, 2);
-        rejectionReason = `NIM Terdeteksi Angkatan 20${year || '24/2025'}. Hanya Mahasiswa Angkatan 2026 yang diperbolehkan bergabung grup WA Resmi.`;
-      } else {
-        // NIM starts with 26. Check simulated OCR data.
-        const ocr = formData.ocrData || {
-          namaSurat: formData.name,
-          nimSurat: formData.nim,
-          prodiSurat: 'Teknik Informatika',
-          tanggalSurat: '18 Juli 2026'
-        };
-
-        const nameMatches = ocr.namaSurat?.toLowerCase().trim() === formData.name.toLowerCase().trim();
-        const nimMatches = ocr.nimSurat?.trim() === formData.nim.trim();
-        const prodiMatches = ocr.prodiSurat?.toLowerCase().includes('teknik informatika');
-        const dateMatches = ocr.tanggalSurat?.includes('2026');
-
-        if (formData.ocrSimulateSuccess === false) {
-          status = 'Rejected';
-          rejectionReason = 'Gagal OCR: Ketidakcocokan Dokumen. ';
-          if (!nameMatches) rejectionReason += 'Nama di surat tidak cocok. ';
-          if (!nimMatches) rejectionReason += 'NIM di surat tidak cocok. ';
-          if (!prodiMatches) rejectionReason += 'Prodi di surat bukan Teknik Informatika. ';
-          if (!dateMatches) rejectionReason += 'Tanggal Surat bukan tahun 2026. ';
-        } else {
-          status = 'Approved';
+        rejectionReason = `NIM Terdeteksi Angkatan 20${year || 'XX'}. Hanya Mahasiswa Angkatan 2026 yang diperbolehkan bergabung grup WA Resmi.`;
+      } else if (!formData.ocrSuccess) {
+        status = 'Rejected';
+        const checks = formData.ocrChecks;
+        rejectionReason = 'Gagal Verifikasi OCR: Ketidakcocokan Dokumen. ';
+        if (checks) {
+          if (!checks.nameMatches) rejectionReason += 'Nama tidak cocok. ';
+          if (!checks.nimMatches) rejectionReason += 'NIM tidak cocok. ';
+          if (!checks.prodiMatches) rejectionReason += 'Prodi bukan Teknik Informatika. ';
+          if (!checks.yearMatches) rejectionReason += 'Tahun surat bukan 2026. ';
         }
+      } else {
+        status = 'Approved';
       }
 
       const submission: WASubmission = {
@@ -402,18 +403,61 @@ export const mockApi = {
         fileName: formData.fileName || 'Surat_Lolos_Seleksi_SIMPMB.pdf',
         fileSize: formData.fileSize || '1.2 MB',
         submittedAt: new Date().toLocaleString('id-ID'),
-        status: status,
-        rejectionReason: rejectionReason,
+        status,
+        rejectionReason,
         waLink: import.meta.env.VITE_WA_GROUP_LINK || 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
       };
 
       const filtered = submissions.filter(s => s.nim !== formData.nim);
       filtered.unshift(submission);
-
       secureStorage.setItem('infotik_wa_submissions', filtered);
       secureStorage.setItem('infotik_my_wa_submission', submission);
       return submission;
     });
+  },
+
+  /**
+   * Verifies an encrypted token via the backend decryption endpoint.
+   * Returns the decoded submission data if valid.
+   */
+  async verifyToken(token: string): Promise<{ valid: boolean; data?: any; message?: string }> {
+    return fetchOrFallback<{ valid: boolean; data?: any; message?: string }>(
+      '/api/wa-submissions/verify-token',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token })
+      },
+      async () => {
+        // offline fallback: token cannot be decrypted without server key
+        return { valid: false, message: 'Server tidak tersedia. Verifikasi token membutuhkan koneksi backend.' };
+      }
+    );
+  },
+
+  /**
+   * Returns a pre-filled WhatsApp URL to notify the admin about a submission.
+   * The message includes the encrypted token so the admin can verify it server-side.
+   */
+  buildAdminWANotifLink(submission: WASubmission): string {
+    const adminNumber = import.meta.env.VITE_ADMIN_WA_NUMBER || '62811103542';
+    const token = submission.verificationToken || '[token-tidak-tersedia]';
+    const msg = [
+      `*[INFOTIK-2026] Laporan Verifikasi WA*`,
+      `────────────────────────`,
+      `Tiket  : ${submission.id}`,
+      `Nama   : ${submission.name}`,
+      `NIM    : ${submission.nim}`,
+      `WA     : ${submission.whatsapp}`,
+      `Status : ${submission.status}`,
+      `Waktu  : ${submission.submittedAt}`,
+      `────────────────────────`,
+      `Token Verifikasi (enkripsi):`,
+      token,
+      `────────────────────────`,
+      `Verifikasi token via panel Admin atau endpoint /api/wa-submissions/verify-token.`
+    ].join('\n');
+    return `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`;
   },
 
   async updateWASubmissionStatus(ticketId: string, status: WASubmission['status'], rejectionReason?: string): Promise<WASubmission[]> {

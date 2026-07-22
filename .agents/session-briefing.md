@@ -15,12 +15,21 @@ Website Sistem Informasi Pusat Mahasiswa Teknik Informatika Angkatan 2026 (INFOT
   - Konfigurasi Gradle (`settings.gradle.kts`, `build.gradle.kts`, `app/build.gradle.kts`) dan `AndroidManifest.xml` (lengkap dengan izin Internet & Cleartext HTTP) telah ditambahkan.
 - ✅ **Aplikasi Mobile iOS Pendamping Lengkap (Swift & SwiftUI)**:
   - Integrasi tab Forum Diskusi lengkap dan Sistem Moderasi Admin Native iOS.
+- ✅ **Akses Lintas Platform & Integrasi PWA (Progressive Web App)**:
+  - **Manifest Web App**: Berkas [manifest.json](file:///d:/Project/IF_UMKT_26/public/manifest.json) mengonfigurasi nama aplikasi, warna tema (`#6366f1`), warna latar (`#070a10`), serta shortcut homescreen.
+  - **Service Worker Offline**: Berkas [sw.js](file:///d:/Project/IF_UMKT_26/public/sw.js) diimplementasikan dengan strategi caching *Network-First* untuk dokumen utama (indeks shell) dan *Stale-While-Revalidate* untuk file statis (JS, CSS, gambar, fonts), serta bypass dinamis untuk routing API (`/api`).
+  - **Aset PWA Bertema Custom**: PWA icons resolusi tinggi (192px & 512px standar + maskable) serta [favicon.svg](file:///d:/Project/IF_UMKT_26/public/favicon.svg) dihasilkan via [generate_icons.py](file:///d:/Project/IF_UMKT_26/generate_icons.py) agar selaras dengan desain *Custom Indigo-Midnight*.
+  - **Integrasi Metadata & Pendaftaran**: Diaktifkan via `index.html` dengan viewport notches `viewport-fit=cover` dan meta tags Apple, serta registrasi service worker di [main.tsx](file:///d:/Project/IF_UMKT_26/src/main.tsx) pada environment production.
 - ✅ Successful production build (`npm run build`).
-- ✅ Updated Graphify Knowledge Graph (2844 nodes, 3352 edges, 249 communities).
+- ✅ Updated Graphify Knowledge Graph (2867 nodes, 3370 edges, 253 communities).
 
 ## Key Files & Structure
 - [src/utils/secureStorage.ts](file:///d:/Project/IF_UMKT_26/src/utils/secureStorage.ts) - Obfuscated cryptography for localStorage
 - [api/index.ts](file:///d:/Project/IF_UMKT_26/api/index.ts) - Node.js Express backend server with HMAC SHA-256
+- [public/manifest.json](file:///d:/Project/IF_UMKT_26/public/manifest.json) - Web App Manifest for PWA installation
+- [public/sw.js](file:///d:/Project/IF_UMKT_26/public/sw.js) - Service Worker for offline capabilities & dynamic caching
+- [public/favicon.svg](file:///d:/Project/IF_UMKT_26/public/favicon.svg) - Vector brand mark logo
+- [generate_icons.py](file:///d:/Project/IF_UMKT_26/generate_icons.py) - Script generating PWA icon assets
 - [vercel.json](file:///d:/Project/IF_UMKT_26/vercel.json) - Vercel deployment configuration with CSP headers
 - [android/](file:///d:/Project/IF_UMKT_26/android/) - Android Studio Gradle project
 - [ios/](file:///d:/Project/IF_UMKT_26/ios/) - iOS Swift SwiftUI project

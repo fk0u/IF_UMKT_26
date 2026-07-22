@@ -38,6 +38,11 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
   const [adminTab, setAdminTab] = useState<'wa' | 'users' | 'news' | 'tasks' | 'forum'>('wa');
 
+  // Token Verifier State
+  const [tokenInput, setTokenInput] = useState('');
+  const [tokenResult, setTokenResult] = useState<{ valid: boolean; data?: any; message?: string } | null>(null);
+  const [isVerifyingToken, setIsVerifyingToken] = useState(false);
+
   // Edit Overlay States
   const [editingUser, setEditingUser] = useState<UserAccount | null>(null);
   const [editingNews, setEditingNews] = useState<NewsItem | null>(null);
@@ -90,6 +95,28 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
         }
       }
     );
+  };
+
+  const handleVerifyToken = async () => {
+    if (!tokenInput.trim()) {
+      onShowToast('Token Kosong', 'Masukkan token enkripsi terlebih dahulu.', 'warning');
+      return;
+    }
+    setIsVerifyingToken(true);
+    setTokenResult(null);
+    try {
+      const result = await mockApi.verifyToken(tokenInput.trim());
+      setTokenResult(result);
+      if (result.valid) {
+        onShowToast('Token Valid ✅', 'Token berhasil didekripsi. Data asli ditampilkan.', 'success');
+      } else {
+        onShowToast('Token Tidak Valid ❌', result.message || 'Token dimanipulasi atau tidak valid.', 'danger');
+      }
+    } catch {
+      setTokenResult({ valid: false, message: 'Koneksi server gagal.' });
+    } finally {
+      setIsVerifyingToken(false);
+    }
   };
 
   // User Actions (ERP CRUD)
@@ -600,6 +627,59 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
           {submissions.length === 0 && (
             <p className="text-xs text-slate-400 italic text-center py-10">Belum ada pendaftaran berkas.</p>
+          )}
+        </div>
+
+        {/* Token Verifier Widget */}
+        <div className="hm-card p-5 rounded-3xl border border-brand-500/20 space-y-4 shadow-hallmark-sm">
+          <div className="flex items-center space-x-2">
+            <div className="w-7 h-7 rounded-xl bg-brand-600 text-white flex items-center justify-center">
+              <ShieldCheck className="w-4 h-4" />
+            </div>
+            <div>
+              <h4 className="font-extrabold text-sm">Verifikator Token Aman (AES-256-CBC)</h4>
+              <p className="text-[11px] text-slate-500 dark:text-slate-400">Tempel token terenkripsi dari WA mahasiswa untuk memverifikasi keasliannya.</p>
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={tokenInput}
+              onChange={e => setTokenInput(e.target.value)}
+              placeholder="Tempel token enkripsi di sini (format: iv_hex:ciphertext_hex)"
+              className="flex-1 px-3 py-2 text-[11px] font-mono-tag rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 focus:border-brand-500 focus:outline-none"
+            />
+            <button
+              onClick={handleVerifyToken}
+              disabled={isVerifyingToken}
+              className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition disabled:opacity-60 flex items-center gap-1.5"
+            >
+              {isVerifyingToken ? <Send className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+              Verifikasi
+            </button>
+          </div>
+
+          {tokenResult && (
+            <div className={`p-4 rounded-2xl text-xs border ${
+              tokenResult.valid
+                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200'
+                : 'bg-rose-500/10 border-rose-500/30 text-rose-900 dark:text-rose-200'
+            }`}>
+              <p className="font-extrabold mb-2">{tokenResult.valid ? '✅ Token Valid — Data Asli:' : '❌ Token Tidak Valid'}</p>
+              {tokenResult.valid && tokenResult.data ? (
+                <div className="font-mono-tag space-y-1">
+                  <p><strong>Tiket ID:</strong> {tokenResult.data.id}</p>
+                  <p><strong>Nama:</strong> {tokenResult.data.name}</p>
+                  <p><strong>NIM:</strong> {tokenResult.data.nim}</p>
+                  <p><strong>WhatsApp:</strong> {tokenResult.data.whatsapp}</p>
+                  <p><strong>Status:</strong> {tokenResult.data.status}</p>
+                  <p><strong>Submit:</strong> {tokenResult.data.submittedAt}</p>
+                </div>
+              ) : (
+                <p>{tokenResult.message}</p>
+              )}
+            </div>
           )}
         </div>
       )}

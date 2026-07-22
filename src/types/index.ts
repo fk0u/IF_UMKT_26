@@ -80,6 +80,7 @@ export interface WASubmission {
   status: 'Pending' | 'Approved' | 'Rejected' | 'Waitlist';
   rejectionReason?: string;
   waLink: string;
+  verificationToken?: string;
 }
 
 export interface MastaStage {

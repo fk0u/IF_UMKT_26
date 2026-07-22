@@ -21,6 +21,33 @@ export function hashPassword(password: string): string {
   return crypto.createHmac('sha256', 'infotik26_backend_hash_salt').update(password).digest('hex');
 }
 
+// Symmetric Encryption Setup for WA Verification Tokens (Symmetrical AES-256-CBC)
+const SECRET = process.env.VERIFICATION_SECRET_KEY || 'infotik26_default_secret_key_32_bytes_long_secret';
+const ENCRYPTION_KEY = crypto.createHash('sha256').update(SECRET).digest();
+const IV_LENGTH = 16;
+
+export function encrypt(text: string): string {
+  const iv = crypto.randomBytes(IV_LENGTH);
+  const cipher = crypto.createCipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
+  let encrypted = cipher.update(text, 'utf8', 'hex');
+  encrypted += cipher.final('hex');
+  return iv.toString('hex') + ':' + encrypted;
+}
+
+export function decrypt(text: string): string {
+  try {
+    const textParts = text.split(':');
+    const iv = Buffer.from(textParts.shift()!, 'hex');
+    const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    const decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
+    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    decrypted += decipher.final('utf8');
+    return decrypted;
+  } catch (error) {
+    throw new Error('Dekripsi gagal. Token tidak valid atau dimanipulasi.');
+  }
+}
+
 // In-Memory Database State
 const INITIAL_USERS = [
   {
@@ -394,28 +421,50 @@ app.get('/api/wa-submissions', (req, res) => {
 });
 
 app.post('/api/wa-submissions', (req, res) => {
-  const { name, nim, whatsapp, fileName, fileSize } = req.body;
+  const { name, nim, whatsapp, fileName, fileSize, ocrSuccess } = req.body;
 
-  // Simulating OCR parsing
-  const isAcceptedOCR =
-    name.trim().length > 0 &&
-    nim.startsWith('26') &&
-    fileName.toLowerCase().includes('.pdf');
+  const isAngkatan2026 = nim.startsWith('26');
+  const isApproved = !!ocrSuccess && isAngkatan2026;
 
-  const ticket = {
+  const ticket: any = {
     id: `tkt-${Date.now().toString().substring(8)}`,
     name,
     nim,
     whatsapp,
     fileName,
     fileSize: fileSize || '120 KB',
-    status: (isAcceptedOCR ? 'Approved' : 'Rejected') as any,
-    rejectionReason: isAcceptedOCR ? undefined : 'OCR gagal mendeteksi tahun 2026 atau format PDF tidak sesuai.',
-    submittedAt: 'Hari ini'
+    status: (isApproved ? 'Approved' : 'Rejected') as any,
+    rejectionReason: isApproved ? undefined : (!isAngkatan2026 ? 'NIM bukan angkatan 2026.' : 'Hasil scan OCR tidak cocok dengan data input Anda.'),
+    submittedAt: new Date().toLocaleString('id-ID')
   };
+
+  // Generate secure verification token
+  const ticketData = {
+    id: ticket.id,
+    name: ticket.name,
+    nim: ticket.nim,
+    whatsapp: ticket.whatsapp,
+    status: ticket.status,
+    submittedAt: ticket.submittedAt
+  };
+  ticket.verificationToken = encrypt(JSON.stringify(ticketData));
 
   dbWASubmissions.push(ticket);
   res.status(201).json(ticket);
+});
+
+app.post('/api/wa-submissions/verify-token', (req, res) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ message: 'Token tidak boleh kosong.' });
+  }
+  try {
+    const decryptedJson = decrypt(token);
+    const data = JSON.parse(decryptedJson);
+    res.json({ valid: true, data });
+  } catch (error) {
+    res.status(400).json({ valid: false, message: 'Token tidak valid atau telah dimanipulasi.' });
+  }
 });
 
 app.put('/api/wa-submissions/:id/status', (req, res) => {
@@ -424,7 +473,21 @@ app.put('/api/wa-submissions/:id/status', (req, res) => {
   const idx = dbWASubmissions.findIndex((s) => s.id === id);
   if (idx !== -1) {
     dbWASubmissions[idx].status = status;
-    if (rejectionReason) dbWASubmissions[idx].rejectionReason = rejectionReason;
+    if (rejectionReason !== undefined) {
+      dbWASubmissions[idx].rejectionReason = rejectionReason;
+    }
+    
+    // Regenerate secure token on status update
+    const ticketData = {
+      id: dbWASubmissions[idx].id,
+      name: dbWASubmissions[idx].name,
+      nim: dbWASubmissions[idx].nim,
+      whatsapp: dbWASubmissions[idx].whatsapp,
+      status: dbWASubmissions[idx].status,
+      submittedAt: dbWASubmissions[idx].submittedAt
+    };
+    dbWASubmissions[idx].verificationToken = encrypt(JSON.stringify(ticketData));
+
     return res.json(dbWASubmissions[idx]);
   }
   res.status(404).json({ message: 'Tiket pendaftaran tidak ditemukan.' });
