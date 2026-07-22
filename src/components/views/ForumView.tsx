@@ -5,9 +5,10 @@ import { useAuth } from '../../context/AuthContext';
 
 interface ForumViewProps {
   onShowToast: (title: string, msg: string, type?: 'info' | 'success' | 'warning' | 'danger') => void;
+  onSelectThread: (threadId: string) => void;
 }
 
-export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
+export const ForumView: React.FC<ForumViewProps> = ({ onShowToast, onSelectThread }) => {
   const { currentUser } = useAuth();
   const { forumQuery, createThreadMutation, upvoteThreadMutation, addReplyMutation } = useForum();
   const forumList = forumQuery.data || [];
@@ -162,7 +163,12 @@ export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
               </div>
 
               <div className="space-y-2">
-                <h3 className="font-extrabold text-base text-slate-900 dark:text-white">{item.title}</h3>
+                <h3 
+                  onClick={() => onSelectThread(item.id)}
+                  className="font-extrabold text-base text-slate-900 dark:text-white hover:text-brand-500 cursor-pointer transition"
+                >
+                  {item.title}
+                </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{item.content}</p>
               </div>
 
@@ -175,7 +181,12 @@ export const ForumView: React.FC<ForumViewProps> = ({ onShowToast }) => {
                   <span className="font-mono-tag">{`${item.upvotes} Upvotes`}</span>
                 </button>
                 <span className="text-slate-400">•</span>
-                <span className="text-slate-500 font-medium">{`${item.replies.length} Balasan`}</span>
+                <button 
+                  onClick={() => onSelectThread(item.id)}
+                  className="text-slate-500 hover:text-brand-500 font-medium transition"
+                >
+                  {`${item.replies.length} Balasan`}
+                </button>
               </div>
 
               {item.replies.length > 0 && (

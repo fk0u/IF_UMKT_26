@@ -6,7 +6,9 @@ export type TabType =
   | 'tips'
   | 'tugas'
   | 'forum'
+  | 'forum-detail'
   | 'buletin'
+  | 'news-detail'
   | 'wagroup'
   | 'admin';
 

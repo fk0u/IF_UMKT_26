@@ -5,9 +5,10 @@ import { useNews } from '../../hooks/useNews';
 
 interface NewsViewProps {
   searchQuery: string;
+  onSelectNews: (newsId: string) => void;
 }
 
-export const NewsView: React.FC<NewsViewProps> = ({ searchQuery }) => {
+export const NewsView: React.FC<NewsViewProps> = ({ searchQuery, onSelectNews }) => {
   const { newsQuery } = useNews();
   const newsList = newsQuery.data || [];
   const [categoryFilter, setCategoryFilter] = useState<string>('Semua');
@@ -73,8 +74,13 @@ export const NewsView: React.FC<NewsViewProps> = ({ searchQuery }) => {
                 <span className="text-slate-400 font-mono-tag">{news.date}</span>
               </div>
 
-              <h3 className="font-extrabold text-lg text-slate-900 dark:text-white leading-snug">{news.title}</h3>
-              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">{news.content}</p>
+              <h3 
+                onClick={() => onSelectNews(news.id)}
+                className="font-extrabold text-lg text-slate-900 dark:text-white hover:text-brand-500 cursor-pointer transition leading-snug"
+              >
+                {news.title}
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed truncate-2-lines">{news.summary || news.content}</p>
 
               <div className="pt-2 text-[11px] text-slate-400 font-medium">
                 Diterbitkan oleh: <span className="text-slate-600 dark:text-slate-300">{news.author}</span>

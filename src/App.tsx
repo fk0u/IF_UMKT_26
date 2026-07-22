@@ -16,6 +16,8 @@ import { ForumView } from './components/views/ForumView';
 import { NewsView } from './components/views/NewsView';
 import { WAVerifyView } from './components/views/WAVerifyView';
 import { AdminView } from './components/views/AdminView';
+import { ForumDetailView } from './components/views/ForumDetailView';
+import { NewsDetailView } from './components/views/NewsDetailView';
 
 import { useNews } from './hooks/useNews';
 import { useTasks } from './hooks/useTasks';
@@ -26,6 +28,8 @@ import { LogIn, UserPlus, Shield, Terminal } from 'lucide-react';
 const AppContent: React.FC = () => {
   const { currentUser, login, signup } = useAuth();
   const [currentTab, setCurrentTab] = useState<TabType>('dashboard');
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const [activeNewsId, setActiveNewsId] = useState<string | null>(null);
   const [darkMode, setDarkMode] = useState<boolean>(() => {
     const saved = localStorage.getItem('infotik_theme');
     if (saved) return saved === 'dark';
@@ -368,13 +372,42 @@ const AppContent: React.FC = () => {
               />
             )}
 
-            {currentTab === 'jadwal' && <ScheduleView />}
+             {currentTab === 'jadwal' && <ScheduleView />}
             {currentTab === 'masta' && <MastaView />}
             {currentTab === 'btq' && <BtqView />}
             {currentTab === 'tips' && <TipsView />}
             {currentTab === 'tugas' && <TasksView onShowToast={showToast} />}
-            {currentTab === 'forum' && <ForumView onShowToast={showToast} />}
-            {currentTab === 'buletin' && <NewsView searchQuery={searchQuery} />}
+            {currentTab === 'forum' && (
+              <ForumView 
+                onShowToast={showToast} 
+                onSelectThread={(id) => {
+                  setActiveThreadId(id);
+                  handleSetTab('forum-detail');
+                }}
+              />
+            )}
+            {currentTab === 'forum-detail' && activeThreadId && (
+              <ForumDetailView
+                threadId={activeThreadId}
+                onBack={() => handleSetTab('forum')}
+                onShowToast={showToast}
+              />
+            )}
+            {currentTab === 'buletin' && (
+              <NewsView 
+                searchQuery={searchQuery} 
+                onSelectNews={(id) => {
+                  setActiveNewsId(id);
+                  handleSetTab('news-detail');
+                }}
+              />
+            )}
+            {currentTab === 'news-detail' && activeNewsId && (
+              <NewsDetailView
+                newsId={activeNewsId}
+                onBack={() => handleSetTab('buletin')}
+              />
+            )}
             {currentTab === 'wagroup' && (
               <WAVerifyView onShowToast={showToast} userSubmission={userSubmission} />
             )}

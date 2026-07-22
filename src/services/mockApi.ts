@@ -1,4 +1,4 @@
-import { ScheduleItem, TaskItem, NewsItem, ForumThread, WASubmission, MastaData, BTQData, AcademicTip } from '../types';
+import { ScheduleItem, TaskItem, NewsItem, ForumThread, WASubmission, MastaData, BTQData, AcademicTip, UserAccount } from '../types';
 
 const INITIAL_SCHEDULES: ScheduleItem[] = [
   { id: 'sch-1', day: 'Senin', dayCode: 1, time: '07:30 - 09:10 WITA', startTime: '07:30', endTime: '09:10', course: 'Pancasila', lecturer: 'Drs. H. Ahmad Dahlan, M.Pd.', room: 'GF-3.02', building: 'Gedung Utama Lt. 3', sks: 2, badge: 'Teori', color: 'from-blue-600 to-indigo-600' },
@@ -341,5 +341,96 @@ export const mockApi = {
       }
     }
     return updated;
+  },
+
+  // User CRUD for Admin ERP
+  async createUser(user: Omit<UserAccount, 'id' | 'avatar'>): Promise<UserAccount> {
+    await delay(300);
+    const data = localStorage.getItem('infotik_users');
+    const list: UserAccount[] = data ? JSON.parse(data) : [];
+    const newUser: UserAccount = {
+      ...user,
+      id: 'usr-' + Date.now(),
+      avatar: `https://api.dicebear.com/7.x/bottts/svg?seed=${encodeURIComponent(user.name)}`
+    };
+    list.push(newUser);
+    localStorage.setItem('infotik_users', JSON.stringify(list));
+    return newUser;
+  },
+
+  async updateUser(userId: string, fields: Partial<UserAccount>): Promise<UserAccount[]> {
+    await delay(200);
+    const data = localStorage.getItem('infotik_users');
+    const list: UserAccount[] = data ? JSON.parse(data) : [];
+    const updated = list.map(u => u.id === userId ? { ...u, ...fields } : u);
+    localStorage.setItem('infotik_users', JSON.stringify(updated));
+    return updated;
+  },
+
+  async deleteUser(userId: string): Promise<UserAccount[]> {
+    await delay(200);
+    const data = localStorage.getItem('infotik_users');
+    const list: UserAccount[] = data ? JSON.parse(data) : [];
+    const filtered = list.filter(u => u.id !== userId);
+    localStorage.setItem('infotik_users', JSON.stringify(filtered));
+    return filtered;
+  },
+
+  // Forum CRUD/Moderasi
+  async updateThread(threadId: string, fields: Partial<ForumThread>): Promise<ForumThread[]> {
+    await delay(200);
+    const list = await this.getForum();
+    const updated = list.map(t => t.id === threadId ? { ...t, ...fields } : t);
+    localStorage.setItem('infotik_forum', JSON.stringify(updated));
+    return updated;
+  },
+
+  async deleteThread(threadId: string): Promise<ForumThread[]> {
+    await delay(200);
+    const list = await this.getForum();
+    const filtered = list.filter(t => t.id !== threadId);
+    localStorage.setItem('infotik_forum', JSON.stringify(filtered));
+    return filtered;
+  },
+
+  async deleteReply(threadId: string, replyIdx: number): Promise<ForumThread[]> {
+    await delay(200);
+    const list = await this.getForum();
+    const updated = list.map(t => {
+      if (t.id === threadId) {
+        const reps = [...t.replies];
+        reps.splice(replyIdx, 1);
+        return { ...t, replies: reps };
+      }
+      return t;
+    });
+    localStorage.setItem('infotik_forum', JSON.stringify(updated));
+    return updated;
+  },
+
+  // News CRUD update
+  async updateNews(newsId: string, fields: Partial<NewsItem>): Promise<NewsItem[]> {
+    await delay(200);
+    const list = await this.getNews();
+    const updated = list.map(n => n.id === newsId ? { ...n, ...fields } : n);
+    localStorage.setItem('infotik_news', JSON.stringify(updated));
+    return updated;
+  },
+
+  // Tasks CRUD update
+  async updateTask(taskId: string, fields: Partial<TaskItem>): Promise<TaskItem[]> {
+    await delay(200);
+    const list = await this.getTasks();
+    const updated = list.map(t => t.id === taskId ? { ...t, ...fields } : t);
+    localStorage.setItem('infotik_tasks', JSON.stringify(updated));
+    return updated;
+  },
+
+  async deleteWASubmission(ticketId: string): Promise<WASubmission[]> {
+    await delay(200);
+    const list = await this.getWASubmissions();
+    const filtered = list.filter(s => s.id !== ticketId);
+    localStorage.setItem('infotik_wa_submissions', JSON.stringify(filtered));
+    return filtered;
   }
 };
