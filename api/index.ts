@@ -2,6 +2,7 @@
 import express from 'express';
 import cors from 'cors';
 import crypto from 'crypto';
+import type { WASubmission } from '../src/types';
 
 const app = express();
 app.use(cors());
@@ -38,9 +39,9 @@ export function decrypt(text: string): string {
   try {
     const textParts = text.split(':');
     const iv = Buffer.from(textParts.shift()!, 'hex');
-    const encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    const encryptedText = textParts.join(':');
     const decipher = crypto.createDecipheriv('aes-256-cbc', ENCRYPTION_KEY, iv);
-    let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+    let decrypted: string = decipher.update(encryptedText, 'hex', 'utf8');
     decrypted += decipher.final('utf8');
     return decrypted;
   } catch (error) {
@@ -150,7 +151,8 @@ const INITIAL_WA_SUBMISSIONS = [
     fileName: 'bukti_kelulusan_rian.pdf',
     fileSize: '342 KB',
     status: 'Approved' as const,
-    submittedAt: '21 Juli 2026 • 11:30'
+    submittedAt: '21 Juli 2026 • 11:30',
+    waLink: 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
   }
 ];
 
@@ -159,7 +161,7 @@ let dbUsers = [...INITIAL_USERS];
 let dbTasks = [...INITIAL_TASKS];
 let dbNews = [...INITIAL_NEWS];
 let dbForum = [...INITIAL_FORUM];
-let dbWASubmissions = [...INITIAL_WA_SUBMISSIONS];
+let dbWASubmissions: WASubmission[] = [...INITIAL_WA_SUBMISSIONS];
 
 // HEALTH ENDPOINT
 app.get('/api/health', (req, res) => {

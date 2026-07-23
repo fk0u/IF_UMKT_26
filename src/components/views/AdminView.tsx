@@ -597,91 +597,93 @@ export const AdminView: React.FC<AdminViewProps> = ({ onShowToast }) => {
 
       {/* Tab Content 1: Verifikasi WA (TanStack Table) */}
       {adminTab === 'wa' && (
-        <div className="hm-card rounded-3xl border overflow-hidden shadow-hallmark-sm">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                {table.getHeaderGroups().map(hg => (
-                  <tr key={hg.id} className="bg-slate-100/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200">
-                    {hg.headers.map(h => (
-                      <th key={h.id} className="px-5 py-3.5">
-                        {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
-                      </th>
-                    ))}
-                  </tr>
-                ))}
-              </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-855 text-xs">
-                {table.getRowModel().rows.map(row => (
-                  <tr key={row.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/40 transition">
-                    {row.getVisibleCells().map(cell => (
-                      <td key={cell.id} className="px-5 py-4">
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        <>
+          <div className="hm-card rounded-3xl border overflow-hidden shadow-hallmark-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left border-collapse">
+                <thead>
+                  {table.getHeaderGroups().map(hg => (
+                    <tr key={hg.id} className="bg-slate-100/80 dark:bg-slate-900/80 border-b border-slate-200 dark:border-slate-800 text-xs font-bold text-slate-700 dark:text-slate-200">
+                      {hg.headers.map(h => (
+                        <th key={h.id} className="px-5 py-3.5">
+                          {h.isPlaceholder ? null : flexRender(h.column.columnDef.header, h.getContext())}
+                        </th>
+                      ))}
+                    </tr>
+                  ))}
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-855 text-xs">
+                  {table.getRowModel().rows.map(row => (
+                    <tr key={row.id} className="hover:bg-slate-50/80 dark:hover:bg-slate-850/40 transition">
+                      {row.getVisibleCells().map(cell => (
+                        <td key={cell.id} className="px-5 py-4">
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {submissions.length === 0 && (
+              <p className="text-xs text-slate-400 italic text-center py-10">Belum ada pendaftaran berkas.</p>
+            )}
           </div>
 
-          {submissions.length === 0 && (
-            <p className="text-xs text-slate-400 italic text-center py-10">Belum ada pendaftaran berkas.</p>
-          )}
-        </div>
+          {/* Token Verifier Widget */}
+          <div className="hm-card p-5 rounded-3xl border border-brand-500/20 space-y-4 shadow-hallmark-sm">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-xl bg-brand-600 text-white flex items-center justify-center">
+                <ShieldCheck className="w-4 h-4" />
+              </div>
+              <div>
+                <h4 className="font-extrabold text-sm">Verifikator Token Aman (AES-256-CBC)</h4>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">Tempel token terenkripsi dari WA mahasiswa untuk memverifikasi keasliannya.</p>
+              </div>
+            </div>
 
-        {/* Token Verifier Widget */}
-        <div className="hm-card p-5 rounded-3xl border border-brand-500/20 space-y-4 shadow-hallmark-sm">
-          <div className="flex items-center space-x-2">
-            <div className="w-7 h-7 rounded-xl bg-brand-600 text-white flex items-center justify-center">
-              <ShieldCheck className="w-4 h-4" />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={tokenInput}
+                onChange={e => setTokenInput(e.target.value)}
+                placeholder="Tempel token enkripsi di sini (format: iv_hex:ciphertext_hex)"
+                className="flex-1 px-3 py-2 text-[11px] font-mono-tag rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 focus:border-brand-500 focus:outline-none"
+              />
+              <button
+                onClick={handleVerifyToken}
+                disabled={isVerifyingToken}
+                className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition disabled:opacity-60 flex items-center gap-1.5"
+              >
+                {isVerifyingToken ? <Send className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
+                Verifikasi
+              </button>
             </div>
-            <div>
-              <h4 className="font-extrabold text-sm">Verifikator Token Aman (AES-256-CBC)</h4>
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Tempel token terenkripsi dari WA mahasiswa untuk memverifikasi keasliannya.</p>
-            </div>
+
+            {tokenResult && (
+              <div className={`p-4 rounded-2xl text-xs border ${
+                tokenResult.valid
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200'
+                  : 'bg-rose-500/10 border-rose-500/30 text-rose-900 dark:text-rose-200'
+              }`}>
+                <p className="font-extrabold mb-2">{tokenResult.valid ? '✅ Token Valid — Data Asli:' : '❌ Token Tidak Valid'}</p>
+                {tokenResult.valid && tokenResult.data ? (
+                  <div className="font-mono-tag space-y-1">
+                    <p><strong>Tiket ID:</strong> {tokenResult.data.id}</p>
+                    <p><strong>Nama:</strong> {tokenResult.data.name}</p>
+                    <p><strong>NIM:</strong> {tokenResult.data.nim}</p>
+                    <p><strong>WhatsApp:</strong> {tokenResult.data.whatsapp}</p>
+                    <p><strong>Status:</strong> {tokenResult.data.status}</p>
+                    <p><strong>Submit:</strong> {tokenResult.data.submittedAt}</p>
+                  </div>
+                ) : (
+                  <p>{tokenResult.message}</p>
+                )}
+              </div>
+            )}
           </div>
-
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={tokenInput}
-              onChange={e => setTokenInput(e.target.value)}
-              placeholder="Tempel token enkripsi di sini (format: iv_hex:ciphertext_hex)"
-              className="flex-1 px-3 py-2 text-[11px] font-mono-tag rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 focus:border-brand-500 focus:outline-none"
-            />
-            <button
-              onClick={handleVerifyToken}
-              disabled={isVerifyingToken}
-              className="px-4 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs transition disabled:opacity-60 flex items-center gap-1.5"
-            >
-              {isVerifyingToken ? <Send className="w-3.5 h-3.5 animate-spin" /> : <ShieldCheck className="w-3.5 h-3.5" />}
-              Verifikasi
-            </button>
-          </div>
-
-          {tokenResult && (
-            <div className={`p-4 rounded-2xl text-xs border ${
-              tokenResult.valid
-                ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-900 dark:text-emerald-200'
-                : 'bg-rose-500/10 border-rose-500/30 text-rose-900 dark:text-rose-200'
-            }`}>
-              <p className="font-extrabold mb-2">{tokenResult.valid ? '✅ Token Valid — Data Asli:' : '❌ Token Tidak Valid'}</p>
-              {tokenResult.valid && tokenResult.data ? (
-                <div className="font-mono-tag space-y-1">
-                  <p><strong>Tiket ID:</strong> {tokenResult.data.id}</p>
-                  <p><strong>Nama:</strong> {tokenResult.data.name}</p>
-                  <p><strong>NIM:</strong> {tokenResult.data.nim}</p>
-                  <p><strong>WhatsApp:</strong> {tokenResult.data.whatsapp}</p>
-                  <p><strong>Status:</strong> {tokenResult.data.status}</p>
-                  <p><strong>Submit:</strong> {tokenResult.data.submittedAt}</p>
-                </div>
-              ) : (
-                <p>{tokenResult.message}</p>
-              )}
-            </div>
-          )}
-        </div>
+        </>
       )}
 
       {/* Tab Content 2: Kelola Mahasiswa (CRUD User) */}

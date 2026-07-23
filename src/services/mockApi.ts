@@ -1,6 +1,6 @@
 /* Hallmark · service: mockApi · pre-emit critique: P5 H5 E5 S5 R5 V5 · genre: full-stack-hybrid · theme: Custom Indigo-Midnight */
 import { ScheduleItem, TaskItem, NewsItem, ForumThread, WASubmission, MastaData, BTQData, AcademicTip, UserAccount } from '../types';
-import { secureStorage } from '../utils/secureStorage';
+import { secureStorage, encryptData } from '../utils/secureStorage';
 
 const INITIAL_SCHEDULES: ScheduleItem[] = [
   { id: 'sch-1', day: 'Senin', dayCode: 1, time: '07:30 - 09:10 WITA', startTime: '07:30', endTime: '09:10', course: 'Pancasila', lecturer: 'Drs. H. Ahmad Dahlan, M.Pd.', room: 'GF-3.02', building: 'Gedung Utama Lt. 3', sks: 2, badge: 'Teori', color: 'from-blue-600 to-indigo-600' },
@@ -408,6 +408,16 @@ export const mockApi = {
         waLink: import.meta.env.VITE_WA_GROUP_LINK || 'https://chat.whatsapp.com/INFOTIK2026UMKTOFFICIALHUB'
       };
 
+      const ticketData = {
+        id: ticketId,
+        name: formData.name,
+        nim: formData.nim,
+        whatsapp: formData.whatsapp,
+        status,
+        submittedAt: submission.submittedAt
+      };
+      submission.verificationToken = encryptData(ticketData);
+
       const filtered = submissions.filter(s => s.nim !== formData.nim);
       filtered.unshift(submission);
       secureStorage.setItem('infotik_wa_submissions', filtered);
@@ -455,7 +465,7 @@ export const mockApi = {
       `Token Verifikasi (enkripsi):`,
       token,
       `────────────────────────`,
-      `Verifikasi token via panel Admin atau endpoint /api/wa-submissions/verify-token.`
+      `Verifikasi token via Panel Admin INFOTIK.`
     ].join('\n');
     return `https://wa.me/${adminNumber}?text=${encodeURIComponent(msg)}`;
   },
@@ -468,16 +478,38 @@ export const mockApi = {
     }, async () => {
       await delay(200);
       const submissions = await this.getWASubmissions();
-      const updated = submissions.map(s => s.id === ticketId ? { ...s, status, rejectionReason: rejectionReason || s.rejectionReason } : s);
+      const updated = submissions.map(s => {
+        if (s.id === ticketId) {
+          const nextSub = { ...s, status, rejectionReason: rejectionReason || s.rejectionReason };
+          const ticketData = {
+            id: nextSub.id,
+            name: nextSub.name,
+            nim: nextSub.nim,
+            whatsapp: nextSub.whatsapp,
+            status: nextSub.status,
+            submittedAt: nextSub.submittedAt
+          };
+          nextSub.verificationToken = encryptData(ticketData);
+          return nextSub;
+        }
+        return s;
+      });
       secureStorage.setItem('infotik_wa_submissions', updated);
 
       const mySub = secureStorage.getItem<WASubmission>('infotik_my_wa_submission');
-      if (mySub) {
-        if (mySub.id === ticketId) {
-          mySub.status = status;
-          if (rejectionReason) mySub.rejectionReason = rejectionReason;
-          secureStorage.setItem('infotik_my_wa_submission', mySub);
-        }
+      if (mySub && mySub.id === ticketId) {
+        mySub.status = status;
+        if (rejectionReason) mySub.rejectionReason = rejectionReason;
+        const ticketData = {
+          id: mySub.id,
+          name: mySub.name,
+          nim: mySub.nim,
+          whatsapp: mySub.whatsapp,
+          status: mySub.status,
+          submittedAt: mySub.submittedAt
+        };
+        mySub.verificationToken = encryptData(ticketData);
+        secureStorage.setItem('infotik_my_wa_submission', mySub);
       }
       return updated;
     });

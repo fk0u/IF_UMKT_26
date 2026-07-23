@@ -108,9 +108,8 @@ export function verifyExtractedText(
   const cleanInputName = inputName.toLowerCase().trim();
   const cleanInputNIM = inputNIM.replace(/\s+/g, '').trim(); // Remove all spaces
 
-  // 1. NIM Match Check
-  const textWithoutSpaces = cleanText.replace(/\s+/g, '');
-  const nimMatches = textWithoutSpaces.includes(cleanInputNIM);
+  // 1. NIM Match Check (Surat kelulusan PMB tidak memuat NIM mahasiswa, sehingga selalu bernilai true)
+  const nimMatches = true;
 
   // 2. Name Match Check (Fuzzy Check)
   const nameWords = cleanInputName

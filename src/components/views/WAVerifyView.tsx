@@ -11,6 +11,7 @@ import {
   verifyExtractedText
 } from '../../utils/ocr';
 import { mockApi } from '../../services/mockApi';
+import { useAuth } from '../../context/AuthContext';
 
 interface WAVerifyViewProps {
   onShowToast: (title: string, msg: string, type?: 'info' | 'success' | 'warning' | 'danger') => void;
@@ -26,9 +27,24 @@ type ScanPhase =
   | 'done';
 
 export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSubmission }) => {
+  const { currentUser } = useAuth();
   const { submitWAVerificationMutation, updateWAStatusMutation } = useWAVerify();
 
-  const [form, setForm] = useState({ name: '', nim: '', whatsapp: '' });
+  const [form, setForm] = useState({
+    name: currentUser?.name || '',
+    nim: currentUser?.nim || '',
+    whatsapp: currentUser?.whatsapp || ''
+  });
+
+  React.useEffect(() => {
+    if (currentUser) {
+      setForm({
+        name: currentUser.name,
+        nim: currentUser.nim,
+        whatsapp: currentUser.whatsapp
+      });
+    }
+  }, [currentUser]);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [scanPhase, setScanPhase] = useState<ScanPhase>('idle');
   const [scanProgress, setScanProgress] = useState(0);
@@ -250,24 +266,33 @@ export const WAVerifyView: React.FC<WAVerifyViewProps> = ({ onShowToast, userSub
               <div className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">Nama Lengkap Sesuai SIM-PMB</label>
-                    <input type="text" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="Contoh: Muhammad Fajar Pratama"
-                      className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 focus:border-brand-500 focus:outline-none" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between">
+                      <span>Nama Lengkap Sesuai SIM-PMB</span>
+                      <span className="text-[9px] font-extrabold text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-lg border border-brand-500/20">Terkunci via Akun</span>
+                    </label>
+                    <input type="text" value={form.name} disabled={true}
+                      placeholder="Nama lengkap sesuai akun"
+                      className="w-full px-4 py-2.5 text-xs rounded-xl bg-slate-200/50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 text-slate-505 focus:outline-none opacity-80 cursor-not-allowed font-medium" />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">NIM Mahasiswa</label>
-                    <input type="text" value={form.nim} onChange={(e) => setForm({ ...form, nim: e.target.value })}
-                      placeholder="NIM Angkatan 2026 (Awalan 26...)"
-                      className="w-full px-4 py-2.5 text-xs font-mono-tag rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 focus:border-brand-500 focus:outline-none" />
+                    <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between">
+                      <span>NIM Mahasiswa</span>
+                      <span className="text-[9px] font-extrabold text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-lg border border-brand-500/20">Terkunci via Akun</span>
+                    </label>
+                    <input type="text" value={form.nim} disabled={true}
+                      placeholder="NIM akun"
+                      className="w-full px-4 py-2.5 text-xs font-mono-tag rounded-xl bg-slate-200/50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 text-slate-505 focus:outline-none opacity-80 cursor-not-allowed font-medium" />
                   </div>
                 </div>
 
                 <div className="space-y-1.5">
-                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-200">Nomor WhatsApp Aktif</label>
-                  <input type="text" value={form.whatsapp} onChange={(e) => setForm({ ...form, whatsapp: e.target.value })}
-                    placeholder="Contoh: 081234567890"
-                    className="w-full px-4 py-2.5 text-xs font-mono-tag rounded-xl bg-slate-100/80 dark:bg-slate-900/80 border border-slate-200/60 dark:border-slate-800/60 focus:border-brand-500 focus:outline-none" />
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-200 flex items-center justify-between">
+                    <span>Nomor WhatsApp Aktif</span>
+                    <span className="text-[9px] font-extrabold text-brand-500 bg-brand-500/10 px-2 py-0.5 rounded-lg border border-brand-500/20">Terkunci via Akun</span>
+                  </label>
+                  <input type="text" value={form.whatsapp} disabled={true}
+                    placeholder="Nomor WA akun"
+                    className="w-full px-4 py-2.5 text-xs font-mono-tag rounded-xl bg-slate-200/50 dark:bg-slate-900 border border-slate-200/60 dark:border-slate-800/60 text-slate-505 focus:outline-none opacity-80 cursor-not-allowed font-medium" />
                 </div>
 
                 <div className="space-y-1.5">

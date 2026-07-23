@@ -17,7 +17,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ currentTab, on
   ];
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 glass-nav border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center justify-around">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 hm-nav-glass border-t border-slate-200 dark:border-slate-800 px-3 py-2 flex items-center justify-around">
       {items.map((item) => {
         const Icon = item.icon;
         const isActive = currentTab === item.id;

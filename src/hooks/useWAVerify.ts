@@ -17,13 +17,13 @@ export const useWAVerify = () => {
       whatsapp: string; 
       fileName: string; 
       fileSize: string;
-      ocrSimulateSuccess?: boolean;
-      ocrData?: {
-        namaSurat?: string;
-        nimSurat?: string;
-        prodiSurat?: string;
-        tanggalSurat?: string;
-      }
+      ocrSuccess: boolean;
+      ocrChecks?: {
+        nameMatches: boolean;
+        nimMatches: boolean;
+        prodiMatches: boolean;
+        yearMatches: boolean;
+      };
     }) => mockApi.submitWAGroupVerification(formData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['wa_submissions'] });
